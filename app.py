@@ -7,7 +7,7 @@ app = Flask(__name__)
 def index():
     """Homepage."""
     standings = list_table_rows()
-    upcoming_events = list_events(filter='upcoming')
+    upcoming_events = list_events(when='upcoming')
     return render_template(
         'index.html', standings=standings, upcoming_events=upcoming_events
     )
@@ -15,7 +15,11 @@ def index():
 @app.route('/artist/<slug>')
 def artist(slug):
     """Artist's public profile."""
-    return render_template('artist.html')
+    artist = get_artist(slug)
+    past_events = list_tallies(when='past', slug=slug)
+    print(past_events)
+    upcoming_events = list_tallies(when='upcoming', slug=slug)
+    return render_template('artist.html', artist=artist)
 
 @app.route('/promoter/<slug>')
 def promoter(slug):
