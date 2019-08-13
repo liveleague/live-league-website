@@ -17,7 +17,9 @@
   <link type="text/css" href="{{ url_for('static', filename='css/blk-design-system.min.css') }}" rel="stylesheet">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg bg-primary">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg bg-dark">
     <div class="container">
       <a class="navbar-brand" href="#">LIVE LEAGUE</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,23 +28,105 @@
       <span class="navbar-toggler-bar navbar-kebab"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        <ul class="nav justify-content-end">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">About</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Features</a>
+            <a class="nav-link" href="#">Events</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Pricing</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">Disabled</a>
+            <a class="nav-link" href="#">Sign In</a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
+
+  <!-- Grid A -->
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+
+        <!-- Column 1 of 2 -->
+        <span>&nbsp;</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid B -->
+  <div class="container">
+  <div class="row">
+    <div class="col-sm">
+
+      <!-- Column 1 of 2 -->
+      <span>
+
+        <!-- Table (Standings) -->
+        <table class="table">
+          <thead>
+              <tr>
+                  <td colspan="3">STANDINGS</td>
+              </tr>
+              <tr>
+                  <th class="text-center">#</th>
+                  <th>Artist</th>
+                  <th>Events</th>
+                  <th>Points</th>
+              </tr>
+          </thead>
+          <tbody>
+          {% for row in standings %}
+              <tr>
+                  <td class="text-center">{{ standings.index(row) + 1 }}</td>
+                  <td><a href="#">{{ row['name'] }}</a></td>
+                  <td>{{ row['event_count'] }}</td>
+                  <td>{{ row['points'] }}</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+      </span>
+    </div>
+    <div class="col-sm">
+
+      <!-- Column 2 of 2 -->
+      <span>
+
+        <!-- Table (Upcoming Events) -->
+        <table class="table">
+          <thead>
+              <tr>
+                  <td colspan="3">UPCOMING EVENTS</td>
+              </tr>
+              <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Name</th>
+                  <th>Venue</th>
+                  <th>Promoter</th>
+                  <th>City</th>
+              </tr>
+          </thead>
+          <tbody>
+          {% for row in upcoming_events %}
+              <tr>
+                  <td>{{ row['start_date'] }}</td>
+                  <td>{{ row['start_time'] }}</td>
+                  <td><a href="#">{{ row['name'] }}</a></td>
+                  <td><a href="#">{{ row['venue'] }}</a></td>
+                  <td><a href="#">{{ row['promoter'] }}</a></td>
+                  <td>{{ row['city'] }}</td>
+              </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+      </span>
+    </div>
+  </div>
+  </div>
 
   <!-- Core -->
   <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
