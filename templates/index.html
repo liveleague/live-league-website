@@ -48,7 +48,7 @@
     <div class="row">
       <div class="col-sm">
 
-        <!-- Column 1 of 2 -->
+        <!-- Column 1 of 1 -->
         <span>&nbsp;</span>
       </div>
     </div>
@@ -79,7 +79,7 @@
           {% for row in standings %}
               <tr>
                   <td class="text-center">{{ standings.index(row) + 1 }}</td>
-                  <td><a href="#">{{ row['name'] }}</a></td>
+                  <td><a href="{{ url_for('artist', slug=row['slug']) }}">{{ row['name'] }}</a></td>
                   <td>{{ row['event_count'] }}</td>
                   <td>{{ row['points'] }}</td>
               </tr>
@@ -113,10 +113,10 @@
           {% for row in upcoming_events %}
               <tr>
                   <td>{{ row['start_date'] }}</td>
-                  <td>{{ row['start_time'] }}</td>
-                  <td><a href="#">{{ row['name'] }}</a></td>
-                  <td><a href="#">{{ row['venue'] }}</a></td>
-                  <td><a href="#">{{ row['promoter'] }}</a></td>
+                  <td>{{ row['start_time'][:-3] }}</td>
+                  <td><a href="{{ url_for('event', id=row['id']) }}">{{ row['name'] }}</a></td>
+                  <td><a href="{{ url_for('venue', slug=row['venue_slug']) }}">{{ row['venue'] }}</a></td>
+                  <td><a href="{{ url_for('promoter', slug=row['promoter_slug']) }}">{{ row['promoter'] }}</a></td>
                   <td>{{ row['city'] }}</td>
               </tr>
           {% endfor %}
