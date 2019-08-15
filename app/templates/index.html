@@ -6,6 +6,18 @@
 {% block content %}
   <!-- Grid B -->
   <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <!-- Column 1 of 1 -->
+        <span>
+          <h1><b>ENTER TAGLINE HERE</b></h1>
+          <h3><b>Enter further info here</b></h3>
+        </span>
+      </div>
+    </div>
+  </div>
+  <!-- Grid C -->
+  <div class="container">
   <div class="row">
     <div class="col-sm">
       <!-- Column 1 of 2 -->
@@ -64,7 +76,7 @@
                   <td><a href="{{ url_for('event', id=row['id']) }}">{{ row['name'] }}</a></td>
                   <td><a href="{{ url_for('venue', slug=row['venue_slug']) }}">{{ row['venue'] }}</a></td>
                   <td><a href="{{ url_for('promoter', slug=row['promoter_slug']) }}">{{ row['promoter'] }}</a></td>
-                  <td>{{ row['city'] }}</td>
+                  <td>{{ row['venue_city'] }}</td>
               </tr>
           {% endfor %}
           </tbody>

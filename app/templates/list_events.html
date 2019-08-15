@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}List Events{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <span>
+          <!-- Main -->
+          <h1><b>{{ category.capitalize() }}</b></h1>
+
+          <!-- Table -->
+          <table class="table">
+            <thead>
+                <tr>
+                    <th>Start Date</th>
+                    <th>Start Time</th>
+                    <th>End Date</th>
+                    <th>End Time</th>
+                    <th>Name</th>
+                    <th>Venue</th>
+                    <th>Line-Up</th>
+                    <th>Promoter</th>
+                    <th>City</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for row in data %}
+                <tr>
+                    <td>{{ row['start_date']|date('full') }}</td>
+                    <td>{{ row['start_time'][:-3] }}</td>
+                    <td>{{ row['end_date']|date('full') }}</td>
+                    <td>{{ row['end_time'][:-3] }}</td>
+                    <td><a href="{{ url_for('event', id=row['id']) }}">{{ row['name'] }}</a></td>
+                    <td><a href="{{ url_for('venue', slug=row['venue_slug']) }}">{{ row['venue'] }}</a></td>
+                    <td>
+                      {% for subrow in row.lineup %}
+                        <p><a href="{{ url_for('artist', slug=subrow['artist_slug']) }}">{{ subrow['artist'] }}</a></p>
+                      {% endfor %}
+                    </td>
+                    <td><a href="{{ url_for('promoter', slug=row['promoter_slug']) }}">{{ row['promoter'] }}</a></td>
+                    <td>{{ row['venue_city'] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+
+        </span>
+      </div>
+    </div>
+  </div>
+{% endblock %}

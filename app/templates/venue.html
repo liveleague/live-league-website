@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Venue{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <span>
+        <!-- Main -->
+        <h1><b>{{ venue.name }}</b></h1>
+        {% if venue.description %}
+          <p>{{ venue.description }}</p>
+          <p>&nbsp;</p>
+        {% endif %}
+        <p><h6>Address: </h6>
+          {{ venue.address_line1 }}<br>
+          {% if venue.address_line2 %}
+            {{ venue.address_line2 }}<br>
+          {% endif %}
+          {% if venue.address_city %}
+            {{ venue.address_city }}<br>
+          {% endif %}
+          {{ venue.address_zip }}
+        </p>
+        <p>&nbsp;</p>
+        {% if upcoming_events %}
+          <!-- Table (Upcoming Events) -->
+          <p>&nbsp;</p>
+            <table class="table">
+              <thead>
+                  <tr>
+                      <td colspan="3"><b>UPCOMING EVENTS</b></td>
+                  </tr>
+                  <tr>
+                      <th>Date</th>
+                      <th>Name</th>
+                  </tr>
+              </thead>
+              <tbody>
+              {% for row in upcoming_events %}
+                  <tr>
+                      <td>{{ row['start_date'] }}</td>
+                      <td><a href="{{ url_for('event', id=row['id']) }}">{{ row['name'] }}</a></td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+        {% endif %}
+        {% if past_events %}
+          <!-- Table (Past Events) -->
+          <p>&nbsp;</p>
+            <table class="table">
+              <thead>
+                  <tr>
+                      <td colspan="3"><b>PAST EVENTS</b></td>
+                  </tr>
+                  <tr>
+                      <th>Date</th>
+                      <th>Name</th>
+                  </tr>
+              </thead>
+              <tbody>
+              {% for row in past_events %}
+                  <tr>
+                    <td>{{ row['start_date'] }}</td>
+                    <td><a href="{{ url_for('event', id=row['id']) }}">{{ row['name'] }}</a></td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+      </span>
+    </div>
+    <div class="col-sm">
+      <span>
+        {% if venue.image %}
+          <img src="{{ venue.image }}">
+        {% endif %}
+        <p>&nbsp;</p>
+        {% if venue.google_maps %}
+          {{ venue.google_maps|safe }}
+        {% endif %}
+      </span>
+    </div>
+  </div>
+  </div>
+{% endblock %}

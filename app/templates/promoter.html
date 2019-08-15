@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Promoter{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <span>
+        <!-- Main -->
+        <h1><b>{{ promoter.name }}</b></h1>
+        {% if promoter.description %}
+          <p>{{ promoter.description }}</p>
+        {% endif %}
+        <p>&nbsp;</p>
+        {% if promoter.facebook %}
+          <i class="fab fa-facebook"></i><a href="{{ promoter.facebook }}"> Facebook</a>
+          <br>
+        {% endif %}
+        {% if promoter.instagram %}
+          <i class="fab fa-instagram"></i><a href="{{ promoter.instagram }}"> Instagram</a>
+          <br>
+        {% endif %}
+        {% if promoter.soundcloud %}
+          <i class="fab fa-soundcloud fa-xs"></i><a href="{{ promoter.soundcloud }}"> Soundcloud</a>
+          <br>
+        {% endif %}
+        {% if promoter.spotify %}
+          <i class="fab fa-spotify"></i><a href="{{ promoter.spotify }}"> Spotify</a>
+          <br>
+        {% endif %}
+        {% if promoter.twitter %}
+          <i class="fab fa-twitter-square"></i><a href="{{ promoter.twitter }}"> Twitter</a>
+          <br>
+        {% endif %}
+        {% if promoter.website %}
+          <i class="far fa-window-maximize"></i><a href="{{ promoter.website }}"> Website</a>
+          <br>
+        {% endif %}
+        {% if promoter.youtube %}
+          <i class="fab fa-youtube"></i><a href="{{ promoter.youtube }}"> Youtube</a>
+          <br>
+        {% endif %}
+        {% if upcoming_events %}
+          <!-- Table (Upcoming Events) -->
+          <p>&nbsp;</p>
+            <table class="table">
+              <thead>
+                  <tr>
+                      <td colspan="3"><b>UPCOMING EVENTS</b></td>
+                  </tr>
+                  <tr>
+                      <th>Date</th>
+                      <th>Name</th>
+                  </tr>
+              </thead>
+              <tbody>
+              {% for row in upcoming_events %}
+                  <tr>
+                      <td>{{ row['start_date'] }}</td>
+                      <td><a href="{{ url_for('event', id=row['id']) }}">{{ row['name'] }}</a></td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+        {% endif %}
+        {% if past_events %}
+          <!-- Table (Past Events) -->
+          <p>&nbsp;</p>
+            <table class="table">
+              <thead>
+                  <tr>
+                      <td colspan="3"><b>PAST EVENTS</b></td>
+                  </tr>
+                  <tr>
+                      <th>Date</th>
+                      <th>Name</th>
+                  </tr>
+              </thead>
+              <tbody>
+              {% for row in past_events %}
+                  <tr>
+                    <td>{{ row['start_date'] }}</td>
+                    <td><a href="{{ url_for('event', id=row['id']) }}">{{ row['name'] }}</a></td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+      </span>
+    </div>
+    <div class="col-sm">
+      <span>
+        {% if promoter.image %}
+          <img src="{{ promoter.image }}">
+        {% endif %}
+      </span>
+    </div>
+  </div>
+  </div>
+{% endblock %}

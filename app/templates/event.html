@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Event{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <span>
+        <!-- Main -->
+        <h1><b>{{ event.name }}</b></h1>
+        {% if event.description %}
+          <p>{{ event.description }}</p>
+          <p>&nbsp;</p>
+        {% endif %}
+        <p><h6>Start: </h6>{{ event.start_date|date('full') }} - {{ event.start_time|time('12') }}</p>
+        <p><h6>End: </h6>{{ event.end_date|date('full') }} - {{ event.end_time|time('12') }}</p>
+        <p><h6>Venue: </h6><a href="{{ url_for('venue', slug=event['venue_slug']) }}">{{ event.venue }}</a></p>
+        <p><h6>Promoter: </h6><a href="{{ url_for('promoter', slug=event['promoter_slug']) }}">{{ event.promoter }}</a></p>
+        <p>&nbsp;</p>
+        {% if event.lineup %}
+          <!-- Table (Line-up) -->
+          <p>&nbsp;</p>
+            <table class="table">
+              <thead>
+                  <tr>
+                      <td colspan="3"><b>LINE-UP</b></td>
+                  </tr>
+                  <tr>
+                      <th>Artist</th>
+                      <th>Points</th>
+                  </tr>
+              </thead>
+              <tbody>
+              {% for row in event.lineup %}
+                  <tr>
+                      <td><a href="{{ url_for('artist', slug=row['artist_slug']) }}">{{ row['artist'] }}</a></td>
+                      <td>{{ row['points'] }}</td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+        {% endif %}
+        {% if event.ticket_types %}
+          <!-- Table (Buy tickets) -->
+          <p>&nbsp;</p>
+            <table class="table">
+              <thead>
+                  <tr>
+                      <td colspan="3"><b>BUY TICKETS</b></td>
+                  </tr>
+                  <tr>
+                      <th>Type</th>
+                      <th>Price</th>
+                      <th>Remaining</th>
+                      <th>Add to cart</th>
+                  </tr>
+              </thead>
+              <tbody>
+              {% for row in event.ticket_types %}
+                  <tr>
+                    <td>{{ row['name'] }}</td>
+                    <td>£{{ row['price'] }}</td>
+                    <td>{{ row['tickets_remaining'] }}</td>
+                    <td><a href="{{ url_for('checkout') }}"><i class="fas fa-cart-plus"></i></a></td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+        {% endif %}
+      </span>
+    </div>
+    <div class="col-sm">
+      <span>
+        {% if event.image %}
+          <img src="{{ event.image }}">
+          <p>&nbsp;</p>
+        {% endif %}
+        {% if event.venue_google_maps %}
+          {{ event.venue_google_maps|safe }}
+        {% endif %}
+      </span>
+    </div>
+  </div>
+  </div>
+{% endblock %}
