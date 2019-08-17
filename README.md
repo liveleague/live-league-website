@@ -2,6 +2,8 @@
 
 ## Install:
 ```
+git clone https://github.com/jackwsellers/live-league-website.git
+cd live-league-website
 pip install -r requirements.txt
 ```
 
