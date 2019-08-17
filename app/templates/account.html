@@ -11,13 +11,128 @@
         <span>
           <!-- Main -->
           <h1><b>Account</b></h1>
-
+          <p><h6>Name: </h6>{{ account.name }}</p>
+          <p><h6>Email: </h6>{{ account.email }}</p>
+          <p><h6>Credit: </h6>£{{ account.credit }}</p>
+          <p>&nbsp;</p>
+          <button type="button" class="btn btn-success btn-sm">Edit</button>
+          <a href="{{ url_for('sign_out') }}" type="button" class="btn btn-warning btn-sm">Sign Out</a>
+          <p>&nbsp;</p>
+          {% if account.facebook %}
+            <i class="fab fa-facebook"></i><a href="{{ account.facebook }}"> Facebook</a>
+            <br>
+          {% endif %}
+          {% if account.instagram %}
+            <i class="fab fa-instagram"></i><a href="{{ account.instagram }}"> Instagram</a>
+            <br>
+          {% endif %}
+          {% if account.soundcloud %}
+            <i class="fab fa-soundcloud fa-xs"></i><a href="{{ account.soundcloud }}"> Soundcloud</a>
+            <br>
+          {% endif %}
+          {% if account.spotify %}
+            <i class="fab fa-spotify"></i><a href="{{ account.spotify }}"> Spotify</a>
+            <br>
+          {% endif %}
+          {% if account.twitter %}
+            <i class="fab fa-twitter-square"></i><a href="{{ account.twitter }}"> Twitter</a>
+            <br>
+          {% endif %}
+          {% if account.website %}
+            <i class="far fa-window-maximize"></i><a href="{{ account.website }}"> Website</a>
+            <br>
+          {% endif %}
+          {% if account.youtube %}
+            <i class="fab fa-youtube"></i><a href="{{ account.youtube }}"> Youtube</a>
+            <br>
+          {% endif %}
+          {% if account.address_line1 or account.address_line2 or account.address_city or account.address_zip %}
+            <p>&nbsp;</p>
+            <p><h6>Address: </h6>
+          {% endif %}
+          {% if account.address_line1 %}
+            {{ account.address_line1 }}<br>
+          {% endif %}
+          {% if account.address_line2 %}
+            {{ account.address_line2 }}<br>
+          {% endif %}
+          {% if account.address_city %}
+            {{ account.address_city }}<br>
+          {% endif %}
+          {% if account.address_zip %}
+            {{ account.address_zip }}
+          {% endif %}
+          </p>
+          <p>&nbsp;</p>
+          {% if upcoming_tickets %}
+            <!-- Table (Upcoming Tickets) -->
+            <p>&nbsp;</p>
+              <table class="table">
+                <thead>
+                    <tr>
+                        <td colspan="3"><b>UPCOMING TICKETS</b></td>
+                    </tr>
+                    <tr>
+                        <th>Code</th>
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Vote</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in upcoming_tickets %}
+                    <tr>
+                        <td><a href="{{ url_for('ticket', code=row['code']) }}">{{ row['code'] }}</td>
+                        <td>{{ row['event_start_date'] }}</td>
+                        <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
+                        <td>{{ row['ticket_type'] }}</td>
+                        {% if row['vote_artist'] %}
+                          <td><a href="{{ url_for('artist', slug=row['vote_artist_slug']) }}">{{ row['vote_artist'] }}</a></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+          {% endif %}
+          {% if past_tickets %}
+          <!-- Table (Past Tickets) -->
+          <p>&nbsp;</p>
+            <table class="table">
+              <thead>
+                  <tr>
+                      <td colspan="3"><b>PAST TICKETS</b></td>
+                  </tr>
+                  <tr>
+                      <th>Code</th>
+                      <th>Date</th>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Vote</th>
+                  </tr>
+              </thead>
+              <tbody>
+              {% for row in past_tickets %}
+                  <tr>
+                      <td><a href="{{ url_for('ticket', code=row['code']) }}">{{ row['code'] }}</td>
+                      <td>{{ row['event_start_date'] }}</td>
+                      <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
+                      <td>{{ row['ticket_type'] }}</td>
+                      {% if row['vote_artist'] %}
+                        <td><a href="{{ url_for('artist', slug=row['vote_artist_slug']) }}">{{ row['vote_artist'] }}</a></td>
+                      {% endif %}
+                  </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+        {% endif %}
         </span>
       </div>
-
       <div class="col-sm">
         <span>
-
+          {% if account.image %}
+            <img src="{{ account.image }}">
+          {% endif %}
         </span>
       </div>
 

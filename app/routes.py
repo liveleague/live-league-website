@@ -1,10 +1,10 @@
 from functools import wraps
 
-from flask import render_template, request, session
+from flask import render_template, request, session, redirect, url_for
 
 from app import app
-from app.wrapper import Public
-from app.forms import LoginForm
+from app.wrapper import Public, Private
+from app.forms import LoginForm, RegisterForm
 
 pub = Public()
 
@@ -49,24 +49,64 @@ def list(category):
 @app.route('/sign-in', methods=['GET', 'POST'])
 def sign_in():
     """Sign-in/registration page."""
-    form = LoginForm()
-    if form.validate_on_submit():
+    login_form = LoginForm(prefix='login_form')
+    register_form = RegisterForm(prefix='register_form')
+    if login_form.validate_on_submit():
         token = pub.get_token(
-            email=request.form['email'], password=request.form['password']
+            email=request.form['login_form-email'],
+            password=request.form['login_form-password']
         )
         session['token'] = token['token']
-        return redirect('account.html')
-    return render_template('sign_in.html', form=form)
+        return redirect(url_for('account'))
+    if register_form.validate_on_submit():
+        email = request.form['register_form-email']
+        password = request.form['register_form-password']
+        name = request.form['register_form-first_name'] + ' ' + \
+               request.form['register_form-last_name']
+        user = pub.create_user(email=email, password=password, name=name)
+        token = pub.get_token(email=email, password=password)
+        session['token'] = token['token']
+        return redirect(url_for('account'))
+    return render_template(
+        'sign_in.html',
+        login_form=login_form,
+        register_form=register_form
+    )
+
+@login_required
+@app.route('/sign-out')
+def sign_out():
+    """Sign-out page."""
+    session.clear()
+    return redirect(url_for('index'))
 
 @app.route('/account')
 @login_required
 def account():
-    return render_template('account.html')
+    account = Private(session['token']).get_account()
+    past_tickets = Private(session['token']).list_tickets(when='past')
+    upcoming_tickets = Private(session['token']).list_tickets(when='upcoming')
+    return render_template(
+        'account.html',
+        account=account,
+        past_tickets=past_tickets,
+        upcoming_tickets=upcoming_tickets
+    )
+
+@app.route('/cart')
+def cart():
+    """Cart page."""
+    return render_template('cart.html')
 
 @app.route('/checkout')
 def checkout():
     """Checkout page."""
     return render_template('checkout.html')
+
+@app.route('/ticket/<code>')
+def ticket(code):
+    """Ticket page."""
+    return render_template('ticket.html')
 
 @app.route('/artist/<slug>')
 def artist(slug):
@@ -110,6 +150,5 @@ def venue(slug):
 @app.route('/id/<id>')
 def event(id):
     """Event page."""
-    print('test')
     event = pub.get_event(id)
     return render_template('event.html', event=event)

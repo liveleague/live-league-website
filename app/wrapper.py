@@ -1,6 +1,8 @@
 from datetime import date, datetime, timedelta
 import requests
 
+API_URL = 'http://46.101.31.33:8000'
+
 
 class Public(object):
     """Interact with the public API."""
@@ -12,16 +14,20 @@ class Public(object):
     def api_call(self, endpoint, method='GET', data=None):
         """Makes an API call to the back-end server."""
         if method == 'GET':
-            return requests.get('http://46.101.31.33:8000' + endpoint).json()
+            return requests.get(API_URL + endpoint).json()
         elif method == 'POST':
-            return requests.post(
-                'http://46.101.31.33:8000' + endpoint, data
-            ).json()
+            return requests.post(API_URL + endpoint, data=data).json()
+
+    def create_user(self, email, password, name):
+        """Retrieve a token or create one for the first time."""
+        data = {'email': email, 'password': password, 'name': name}
+        user = self.api_call('/user/create/', 'POST', data)
+        return user
 
     def get_token(self, email, password):
         """Retrieve a token or create one for the first time."""
         data = {'email': email, 'password': password}
-        token = self.api_call('/user/token/', 'POST', data=data)
+        token = self.api_call('/user/token/', 'POST', data)
         return token
 
     def get_artist(self, slug):
@@ -42,7 +48,6 @@ class Public(object):
     def get_event(self, id):
         """Retrieve a event."""
         event = self.api_call('/league/event/' + id)
-        print(event)
         if 'lineup' in event:
             id
             lineup = event['lineup']
@@ -82,14 +87,12 @@ class Public(object):
         return table_rows
 
     def list_events(self, promoter=None, venue=None, when='all'):
-        """
-        List events.
-        Date format = 'yyyy-mm-dd'
-        """
+        """List events."""
         if promoter:
             promoter = '&promoter=' + promoter
         else:
             promoter = ""
+
         if venue:
             venue = '&venue=' + venue
         else:
@@ -110,3 +113,41 @@ class Public(object):
                 '/league/list/events/?ordering=start_date' + promoter + venue
             )
         return events
+
+
+class Private(object):
+    """Interact with the private API."""
+
+    def __init__(self, token):
+        self.token = token
+        self.today = str(date.today())
+        self.yesterday = str(date.today()  - timedelta(days=1))
+
+    def api_call(self, endpoint, method='GET', data=None):
+        """Makes an API call to the back-end server."""
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + self.token
+        }
+        if method == 'GET':
+            return requests.get(API_URL + endpoint, headers=headers).json()
+        elif method == 'POST':
+            return requests.post(
+                API_URL + endpoint, headers=headers, data=data
+            ).json()
+
+    def get_account(self):
+        """Retrieve the user's account."""
+        account = self.api_call('/user/me')
+        return account
+
+    def list_tickets(self, when='all'):
+        """List the user's tickets."""
+        response = self.api_call('/league/list/tickets')
+        tickets = []
+        for ticket in response:
+            if (when == 'past' and ticket['event_start_date'] < self.today) or \
+               (when == 'upcoming' and ticket['event_start_date'] > self.yesterday) or \
+               when not in ['past', 'upcoming']:
+                    tickets.append(ticket)
+        return tickets

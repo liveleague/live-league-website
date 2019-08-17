@@ -13,7 +13,7 @@
     <!-- BLK• CSS -->
     <link type="text/css" href="{{ url_for('static', filename='css/blk-design-system.css') }}" rel="stylesheet">
     <!-- Core -->
-    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='vendor/popper/popper.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.js') }}"></script>
     <!-- Optional plugins -->
@@ -46,6 +46,9 @@
                 <a class="nav-link" href="{{ url_for('account') }}">Account</a>
               {% else %}
                 <a class="nav-link" href="{{ url_for('sign_in') }}">Sign In</a>
+              {% endif %}
+              {% if session.cart %}
+                <a class="nav-link" href="{{ url_for('cart') }}"><i class="fas fa-shopping-cart"></i></a>
               {% endif %}
             </li>
           </ul>

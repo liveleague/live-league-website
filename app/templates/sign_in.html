@@ -10,41 +10,111 @@
       <div class="col-sm">
         <span>
           <!-- Main -->
-          <h1><b>Sign In</b></h1>
+          <h1 id="main-header"><b>Sign In</b></h1>
 
           <form action="" method="post" novalidate>
-            {{ form.hidden_tag() }}
+            {{ login_form.hidden_tag() }}
+            {{ register_form.hidden_tag() }}
 
-            <div class="form-check">
+            <!-- Register checkbox -->
+            <div id="registration-btn" class="form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" type="checkbox" value="">
+                    {{ login_form.register(id="registration-check", class="form-check-input", type="checkbox", value="") }}
                     I don't have an account yet
                     <span class="form-check-sign">
                         <span class="check"></span>
                     </span>
                 </label>
-            </div>
             <p>&nbsp;</p>
+            </div>
 
-            <div class="form-group">
-              {{ form.email.label(for="exampleInputEmail1") }}
-              {{ form.email(type="email", class="form-control", id="exampleInputEmail1", placeholder="Enter email", **{'aria-describedby':"emailHelp"}) }}
-              {% for error in form.email.errors %}
+            <!-- First name (register only) -->
+            <div id="first-name-div" class="form-group"  style="display: none;">
+              {{ register_form.first_name.label(for="firstNameInput") }}
+              {{ register_form.first_name(type="text", class="form-control", id="firstNameInput", placeholder="Enter first name") }}
+              {% for error in register_form.first_name.errors %}
                 <span style="color: white;">[{{ error }}]</span>
               {% endfor %}
             </div>
 
-            <div class="form-group">
-              {{ form.password.label(for="exampleInputPassword1") }}
-              {{ form.password(type="password", class="form-control", id="exampleInputPassword1", placeholder="Enter password") }}
-              {% for error in form.password.errors %}
+            <!-- Last name (register only) -->
+            <div id="last-name-div" class="form-group"  style="display: none;">
+              {{ register_form.last_name.label(for="lastNameInput") }}
+              {{ register_form.last_name(type="text", class="form-control", id="lastNameInput", placeholder="Enter last name") }}
+              {% for error in register_form.last_name.errors %}
                 <span style="color: white;">[{{ error }}]</span>
               {% endfor %}
             </div>
-            <p>&nbsp;</p>
-            {{ form.submit(type="submit", class="btn btn-primary") }}
 
+            <!-- Email -->
+            <div class="form-group">
+              {{ login_form.email.label(for="exampleInputEmail1") }}
+
+              {{ login_form.email(id="login-email-input", type="email", class="form-control", placeholder="Enter email", **{'aria-describedby':"emailHelp"}) }}
+              {{ register_form.email(id="register-email-input", style="display: none;", type="email", class="form-control", placeholder="Enter email", **{'aria-describedby':"emailHelp"}) }}
+
+              {% for error in login_form.email.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+              {{ login_form.password.label(for="exampleInputPassword1") }}
+
+              {{ login_form.password(id="login-password-input", type="password", class="form-control", placeholder="Enter password") }}
+              {{ register_form.password(id="register-password-input", style="display: none;", type="password", class="form-control", placeholder="Enter password") }}
+
+              {% for error in login_form.password.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Confirm password (register only) -->
+            <div id="confirm-password-div" class="form-group"  style="display: none;">
+              {{ register_form.confirm.label(for="exampleInputPassword2") }}
+              {{ register_form.confirm(type="password", class="form-control", id="exampleInputPassword2", placeholder="Enter password again") }}
+              {% for error in register_form.confirm.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <p>&nbsp;</p>
+
+            <!-- Submit button -->
+            {{ login_form.submit(id="login-submit-btn", type="submit", class="btn btn-primary") }}
+            {{ register_form.submit(id="register-submit-btn", style="display: none;", type="submit", class="btn btn-primary") }}
           </form>
+
+          <script>
+            $(document).ready(function() {
+              $('#registration-btn').click(function() {
+                if ($('#registration-check').prop('checked')) {
+                  $("#main-header").html("<h1><b>Register</b></h1>");
+                  $("#first-name-div").show();
+                  $("#last-name-div").show();
+                  $("#register-email-input").show();
+                  $("#login-email-input").hide();
+                  $("#register-password-input").show();
+                  $("#login-password-input").hide();
+                  $("#confirm-password-div").show();
+                  $("#register-submit-btn").show();
+                  $("#login-submit-btn").hide();
+                } else {
+                  $("#main-header").html("<h1><b>Sign In</b></h1>");
+                  $("#first-name-div").hide();
+                  $("#last-name-div").hide();
+                  $("#register-email-input").hide();
+                  $("#login-email-input").show();
+                  $("#register-password-input").hide();
+                  $("#login-password-input").show();
+                  $("#confirm-password-div").hide();
+                  $("#register-submit-btn").hide();
+                  $("#login-submit-btn").show();
+                }
+              });
+            });
+          </script>
 
         </span>
       </div>
