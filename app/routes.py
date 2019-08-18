@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import render_template, request, session, redirect, url_for
+from flask import render_template, request, session, redirect, url_for, jsonify
 
 from app import app
 from app.wrapper import Public, Private
@@ -22,14 +22,29 @@ def login_required(f):
             return redirect(url_for('sign_in'))
     return wrap
 
+@app.route('/_add_to_cart')
+def add_to_cart():
+    ticket_type = request.args.get('ticket_type')
+    if 'cart' not in session:
+        session['cart'] = []
+    session['cart'].append(ticket_type)
+    print(session)
+    return jsonify(result=session['cart'][-1])
+
 @app.route('/')
 def index():
     """Homepage."""
     standings = pub.list_table_rows()
+    prize_pool = 0
+    for row in standings:
+        prize_pool += row['points']
     upcoming_events = pub.list_events(when='upcoming')
     print(session)
     return render_template(
-        'index.html', standings=standings, upcoming_events=upcoming_events
+        'index.html',
+        standings=standings,
+        prize_pool=prize_pool,
+        upcoming_events=upcoming_events
     )
 
 @app.route('/about')

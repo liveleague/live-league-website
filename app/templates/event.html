@@ -64,9 +64,26 @@
                     <td>{{ row['name'] }}</td>
                     <td>£{{ row['price'] }}</td>
                     <td>{{ row['tickets_remaining'] }}</td>
-                    <td><a href="#"><i class="fas fa-cart-plus"></i></a></td>
+                    <td><a href="#" class="add-to-cart" data-id="{{ row['slug'] }}"><i class="fas fa-cart-plus"></i></a></td>
                   </tr>
               {% endfor %}
+              <script type=text/javascript>
+                $(document).ready(function() {
+                  $(function() {
+                    $(".add-to-cart").click(function() {
+                      var slug = $(this).data("id");
+                      $.getJSON($SCRIPT_ROOT + "/_add_to_cart", {
+                        ticket_type: slug,
+                      }, function(data) {
+                        if (data.result == slug) {
+                          location.reload();
+                        }
+                      });
+                      return false;
+                    });
+                  });
+                });
+              </script>
               </tbody>
             </table>
         {% endif %}
