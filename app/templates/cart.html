@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Cart{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  {% if cart_quantities == 0 %}
+    <!-- Grid B -->
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <span>
+            <h1><b>Cart</b></h1>
+              <p>The cart is empty</p>
+          </span>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <!-- Grid B -->
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <span>
+            <h1><b>Cart</b></h1>
+              <!-- Table (Tickets) -->
+              <p>&nbsp;</p>
+                <table class="table">
+                  <thead>
+                      <tr>
+                          <td colspan="5"><b>TICKETS</b></td>
+                      </tr>
+                      <tr>
+                          <th>Event</th>
+                          <th>Type</th>
+                          <th>Price</th>
+                          <th>Quantity</th>
+                          <th>Remove from cart</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                  {% for row in cart %}
+                      <tr>
+                        <td>{{ row['event'] }}</td>
+                        <td>{{ row['name'] }}</td>
+                        <td>£{{ row['price'] }}</td>
+                        <td>{{ row['quantity'] }}</td>
+                        <td><a href="#" class="remove-from-cart" data-id="{{ row['slug'] }}"><i class="fas fa-trash-alt"></i></a></td>
+                      </tr>
+                  {% endfor %}
+                  <script type=text/javascript>
+                    $(document).ready(function() {
+                      $(function() {
+                        $(".remove-from-cart").click(function() {
+                          var slug = $(this).data("id");
+                          $.getJSON($SCRIPT_ROOT + "/_remove_from_cart", {
+                            ticket_type: slug,
+                          }, function(data) {
+                            if (data.result.includes(slug)) {
+                            } else {
+                              location.reload();
+                            }
+                          });
+                          return false;
+                        });
+                      });
+                    });
+                  </script>
+                  </tbody>
+                </table>
+            <p>&nbsp;</p>
+              <div align="right">
+                <a href="{{ url_for('checkout') }}" type="button" class="btn btn-success btn-sm">Checkout</a>
+              </div>
+          </span>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

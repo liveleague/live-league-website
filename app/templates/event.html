@@ -26,7 +26,7 @@
             <table class="table">
               <thead>
                   <tr>
-                      <td colspan="3"><b>LINE-UP</b></td>
+                      <td colspan="2"><b>LINE-UP</b></td>
                   </tr>
                   <tr>
                       <th>Artist</th>
@@ -49,12 +49,13 @@
             <table class="table">
               <thead>
                   <tr>
-                      <td colspan="3"><b>BUY TICKETS</b></td>
+                      <td colspan="5"><b>BUY TICKETS</b></td>
                   </tr>
                   <tr>
                       <th>Type</th>
                       <th>Price</th>
                       <th>Remaining</th>
+                      <th>Quantity</th>
                       <th>Add to cart</th>
                   </tr>
               </thead>
@@ -64,6 +65,7 @@
                     <td>{{ row['name'] }}</td>
                     <td>£{{ row['price'] }}</td>
                     <td>{{ row['tickets_remaining'] }}</td>
+                    <td><input type="number" class="form-control quantity-input" placeholder="Enter quantity"></td>
                     <td><a href="#" class="add-to-cart" data-id="{{ row['slug'] }}"><i class="fas fa-cart-plus"></i></a></td>
                   </tr>
               {% endfor %}
@@ -72,14 +74,20 @@
                   $(function() {
                     $(".add-to-cart").click(function() {
                       var slug = $(this).data("id");
-                      $.getJSON($SCRIPT_ROOT + "/_add_to_cart", {
-                        ticket_type: slug,
-                      }, function(data) {
-                        if (data.result == slug) {
-                          location.reload();
-                        }
-                      });
-                      return false;
+                      var number = $(this).closest("tr").find(".quantity-input").val();
+                      if (number > 0) {
+                        $.getJSON($SCRIPT_ROOT + "/_add_to_cart", {
+                          ticket_type: slug,
+                          quantity: number,
+                        }, function(data) {
+                          if (data.result['ticket_type'] == slug && data.result['quantity'] == number) {
+                            location.reload();
+                          }
+                        });
+                        return false;
+                      } else {
+                        location.reload();
+                      }
                     });
                   });
                 });

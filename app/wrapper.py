@@ -68,6 +68,11 @@ class Public(object):
         )
         return tally
 
+    def get_ticket_type(self, slug):
+        """Retrieve a tally."""
+        ticket_type = self.api_call('/league/ticket-type/' + slug)
+        return ticket_type
+
     def list_tallies(self, slug, when='all'):
         """List tallies (events and votes) for artists in the league."""
         response = self.api_call(

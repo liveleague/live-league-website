@@ -20810,3 +20810,7 @@ input.datetimepicker[data-color="yellow"]+.bootstrap-datetimepicker-widget.dropd
 }
 
 /*# sourceMappingURL=kit-free.css.map */
+
+.quantity-input {
+  max-width: 150px;
+}

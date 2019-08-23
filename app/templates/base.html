@@ -23,6 +23,10 @@
     <script src="{{ url_for('static', filename='vendor/PLUGIN_FOLDER/PLUGIN_SCRIPT.js') }}"></script>
     <!-- BLK• JS -->
     <script src="{{ url_for('static', filename='js/blk-design-system.js') }}"></script>
+    <!-- Stripe -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="{{ url_for('static', filename='js/stripe.js') }}"></script>
+    <script src="{{ url_for('static', filename='css/stripe.css') }}" rel="stylesheet"></script>
     {% endblock %}
 </head>
 <body>
@@ -52,10 +56,10 @@
               {% endif %}
             </li>
             <li class="nav-item">
-              {% if session.cart|length == 0 %}
+              {% if cart_quantities == 0 %}
                 <a class="nav-link" href="{{ url_for('cart') }}" id="nav-cart"><i class="fas fa-shopping-cart"></i></a>
               {% else %}
-                <a class="nav-link" href="{{ url_for('cart') }}" id="nav-cart"><i class="fas fa-shopping-cart"></i> {{ session.cart|length }}</a>
+                <a class="nav-link" href="{{ url_for('cart') }}" id="nav-cart"><i class="fas fa-shopping-cart"></i> {{ cart_quantities }}</a>
               {% endif %}
             </li>
           </ul>
@@ -73,6 +77,7 @@
       </div>
     </div>
     {% block content %}{% endblock %}
+    <p>&nbsp;</p>
   </div>
 </body>
 </html>
