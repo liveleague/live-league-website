@@ -177,7 +177,7 @@
                 <div class="form-check form-check-radio">
                     <label class="form-check-label">
                         <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
-                        Credit/Debit Card
+                        Card
                         <span class="form-check-sign"></span>
                     </label>
                 </div>
@@ -198,25 +198,37 @@
                     </label>
                 </div>
 
+                <div class="form-check form-check-radio">
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="exampleRadios1" id="exampleRadios1" value="option1">
+                        Credit
+                        <span class="form-check-sign"></span>
+                    </label>
+                </div>
+
               </p>
 
               <p>&nbsp;</p>
 
-              <form action="/charge" method="post" id="payment-form">
+              <!-- Stripe -->
+
+              <form action="{{ url_for('charge', intent_id=intent.id) }}" method="post" id="payment-form">
                 <div class="form-row">
-                  <label for="card-element">
-                    Credit or debit card
-                  </label>
-                  <div id="card-element">
-                    <!-- A Stripe Element will be inserted here. -->
+                  <div id="card-element" class="form-control">
+                    <!-- a Stripe Element will be inserted here. -->
                   </div>
 
-                  <!-- Used to display form errors. -->
-                  <div id="card-errors" role="alert"></div>
+                  <!-- Used to display form errors -->
+                  <div id="card-errors"></div>
                 </div>
 
-                <button>Submit Payment</button>
+                <p>&nbsp;</p>
+
+                <button class="btn btn-primary" data-secret="{{ intent.client_secret }}">Pay</button>
               </form>
+
+              <script src="https://js.stripe.com/v3/"></script>
+              <script src="{{ url_for('static', filename='js/stripe.js') }}"></script>
 
             {% endif %}
           </span>

@@ -8,25 +8,23 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet">
     <!-- Icons -->
-    <link href="{{ url_for('static', filename='vendor/nucleo/css/nucleo-icons.css') }}" rel="stylesheet">
-    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+    <link type="text/css" href="{{ url_for('static', filename='vendor/nucleo/css/nucleo-icons.css') }}" rel="stylesheet">
+    <link type="text/css" href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <!-- BLK• CSS -->
     <link type="text/css" href="{{ url_for('static', filename='css/blk-design-system.css') }}" rel="stylesheet">
     <!-- Core -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/core/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/core/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/core/bootstrap.min.js') }}"></script>
     <script type=text/javascript>
       $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </script>
-    <script src="{{ url_for('static', filename='vendor/popper/popper.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.js') }}"></script>
     <!-- Optional plugins -->
     <script src="{{ url_for('static', filename='vendor/PLUGIN_FOLDER/PLUGIN_SCRIPT.js') }}"></script>
     <!-- BLK• JS -->
     <script src="{{ url_for('static', filename='js/blk-design-system.js') }}"></script>
     <!-- Stripe -->
-    <script src="https://js.stripe.com/v3/"></script>
-    <script src="{{ url_for('static', filename='js/stripe.js') }}"></script>
-    <script src="{{ url_for('static', filename='css/stripe.css') }}" rel="stylesheet"></script>
+    <link type="text/css" href="{{ url_for('static', filename='css/stripe.css') }}" rel="stylesheet">
     {% endblock %}
 </head>
 <body>
@@ -79,5 +77,6 @@
     {% block content %}{% endblock %}
     <p>&nbsp;</p>
   </div>
+
 </body>
 </html>

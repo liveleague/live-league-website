@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Ticket{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <span>
+          <!-- Main -->
+          <h1><b>Ticket</b></h1>
+          <p><h6>Event: </h6><a href="{{ url_for('event', id=ticket.event_id) }}">{{ ticket.event }}</a></p>
+          <p><h6>Start: </h6>{{ ticket.event_start_date|date('full') }} - {{ ticket.event_start_time|time('12') }}</p>
+          <p><h6>Code: </h6>{{ ticket.code }}</p>
+          <p><h6>Type: </h6>{{ ticket.ticket_type }}</p>
+          {% if account %}
+            {% if ticket.vote_artist %}
+              <p><h6>Vote: </h6>
+              <a href="{{ url_for('artist', slug=ticket.vote_slug) }}">{{ ticket.vote_artist }}</a></p>
+            {% else %}
+              <p>&nbsp;</p>
+              <p>
+                <div class="dropdown">
+                  <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Vote
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    {% for row in lineup %}
+                      <a class="dropdown-item dropdown-vote" data-id="{{ row['slug'] }}" href="#">{{ row['artist'] }}</a>
+                    {% endfor %}
+                  </div>
+                </div>
+
+                <script type=text/javascript>
+                  $(document).ready(function() {
+                    $(".dropdown-vote").click(function() {
+                      var code = "{{ ticket.code }}";
+                      var tally = $(this).data("id");
+                        $.getJSON($SCRIPT_ROOT + "/_vote", {
+                          code: code,
+                          tally: tally,
+                        }, function(data) {
+                          if (data.result['vote'] == tally && data.result['owner'] == "{{ account.name }}") {
+                            location.reload();
+                          }
+                        });
+                        return false;
+                    });
+                  });
+                </script>
+
+              </p>
+            {% endif %}
+          {% else %}
+
+            <p>&nbsp;</p>
+            <form action="" method="post" novalidate>
+              {{ login_form.hidden_tag() }}
+              {{ register_form.hidden_tag() }}
+
+              <!-- Register checkbox -->
+              <div id="registration-btn" class="form-check">
+                  <label class="form-check-label">
+                      {{ login_form.register(id="registration-check", class="form-check-input", type="checkbox", value="") }}
+                      I don't have an account yet
+                      <span class="form-check-sign">
+                          <span class="check"></span>
+                      </span>
+                  </label>
+              <p>&nbsp;</p>
+              </div>
+
+              <!-- First name (register only) -->
+              <div id="first-name-div" class="form-group"  style="display: none;">
+                {{ register_form.first_name.label(for="firstNameInput") }}
+                {{ register_form.first_name(type="text", class="form-control", id="firstNameInput", placeholder="Enter first name") }}
+                {% for error in register_form.first_name.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Last name (register only) -->
+              <div id="last-name-div" class="form-group"  style="display: none;">
+                {{ register_form.last_name.label(for="lastNameInput") }}
+                {{ register_form.last_name(type="text", class="form-control", id="lastNameInput", placeholder="Enter last name") }}
+                {% for error in register_form.last_name.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Email -->
+              <div class="form-group">
+                {{ login_form.email.label(for="exampleInputEmail1") }}
+
+                {{ login_form.email(id="login-email-input", type="email", class="form-control", placeholder="Enter email", **{'aria-describedby':"emailHelp"}) }}
+                {{ register_form.email(id="register-email-input", style="display: none;", type="email", class="form-control", placeholder="Enter email", **{'aria-describedby':"emailHelp"}) }}
+
+                {% for error in login_form.email.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Password -->
+              <div class="form-group">
+                {{ login_form.password.label(for="exampleInputPassword1") }}
+
+                {{ login_form.password(id="login-password-input", type="password", class="form-control", placeholder="Enter password") }}
+                {{ register_form.password(id="register-password-input", style="display: none;", type="password", class="form-control", placeholder="Enter password") }}
+
+                {% for error in login_form.password.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Confirm password (register only) -->
+              <div id="confirm-password-div" class="form-group"  style="display: none;">
+                {{ register_form.confirm.label(for="exampleInputPassword2") }}
+                {{ register_form.confirm(type="password", class="form-control", id="exampleInputPassword2", placeholder="Enter password again") }}
+                {% for error in register_form.confirm.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <p>&nbsp;</p>
+              <!-- Submit button -->
+              {{ login_form.submit(id="login-submit-btn", type="submit", class="btn btn-primary", value="Sign In") }}
+              {{ register_form.submit(id="register-submit-btn", style="display: none;", type="submit", class="btn btn-primary", value="Register") }}
+
+            </form>
+
+            <script>
+              $(document).ready(function() {
+                $('#registration-btn').click(function() {
+                  if ($('#registration-check').prop('checked')) {
+                    $("#main-header").html("<h1><b>Register</b></h1>");
+                    $("#first-name-div").show();
+                    $("#last-name-div").show();
+                    $("#register-email-input").show();
+                    $("#login-email-input").hide();
+                    $("#register-password-input").show();
+                    $("#login-password-input").hide();
+                    $("#confirm-password-div").show();
+                    $("#register-submit-btn").show();
+                    $("#login-submit-btn").hide();
+                  } else {
+                    $("#main-header").html("<h1><b>Sign In</b></h1>");
+                    $("#first-name-div").hide();
+                    $("#last-name-div").hide();
+                    $("#register-email-input").hide();
+                    $("#login-email-input").show();
+                    $("#register-password-input").hide();
+                    $("#login-password-input").show();
+                    $("#confirm-password-div").hide();
+                    $("#register-submit-btn").hide();
+                    $("#login-submit-btn").show();
+                  }
+                });
+              });
+            </script>
+
+          {% endif %}
+        </span>
+      </div>
+      <div class="col-sm">
+        <span>
+          {% if image %}
+            <img src="{{ image }}">
+          {% endif %}
+        </span>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

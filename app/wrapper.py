@@ -11,23 +11,27 @@ class Public(object):
         self.today = str(date.today())
         self.yesterday = str(date.today()  - timedelta(days=1))
 
-    def api_call(self, endpoint, method='GET', data=None):
+    def api_call(self, endpoint, method='GET', json=None):
         """Makes an API call to the back-end server."""
         if method == 'GET':
-            return requests.get(API_URL + endpoint).json()
+            r = requests.get(API_URL + endpoint)
         elif method == 'POST':
-            return requests.post(API_URL + endpoint, data=data).json()
+            r = requests.post(API_URL + endpoint, json=json)
+        if str(r.status_code).startswith('2'):
+            return r.json()
+        else:
+            return r.status_code
 
     def create_user(self, email, password, name):
-        """Retrieve a token or create one for the first time."""
-        data = {'email': email, 'password': password, 'name': name}
-        user = self.api_call('/user/create/', 'POST', data)
+        """Create a user."""
+        json = {'email': email, 'password': password, 'name': name}
+        user = self.api_call('/user/create/', 'POST', json)
         return user
 
     def get_token(self, email, password):
         """Retrieve a token or create one for the first time."""
-        data = {'email': email, 'password': password}
-        token = self.api_call('/user/token/', 'POST', data)
+        json = {'email': email, 'password': password}
+        token = self.api_call('/user/token/', 'POST', json)
         return token
 
     def get_artist(self, slug):
@@ -47,7 +51,7 @@ class Public(object):
 
     def get_event(self, id):
         """Retrieve a event."""
-        event = self.api_call('/league/event/' + id)
+        event = self.api_call('/league/event/' + str(id))
         if 'lineup' in event:
             id
             lineup = event['lineup']
@@ -68,15 +72,20 @@ class Public(object):
         )
         return tally
 
+    def get_ticket(self, code):
+        """Retrieve a ticket that is unowned."""
+        ticket = self.api_call('/league/ticket/' + code)
+        return ticket
+
     def get_ticket_type(self, slug):
         """Retrieve a tally."""
         ticket_type = self.api_call('/league/ticket-type/' + slug)
         return ticket_type
 
-    def list_tallies(self, slug, when='all'):
-        """List tallies (events and votes) for artists in the league."""
+    def list_tallies(self, slug='', event_id='', when='all'):
+        """List tallies (lineup entries) for artists in the league."""
         response = self.api_call(
-            '/league/list/tallies/?artist=' + slug
+            '/league/list/tallies/?artist=' + slug + '&event=' + str(event_id)
         )
         tallies = []
         for tally in response:
@@ -91,27 +100,18 @@ class Public(object):
         table_rows = self.api_call('/league/list/table-rows/?ordering=-points')
         return table_rows
 
-    def list_events(self, promoter=None, venue=None, when='all'):
+    def list_events(self, promoter='', venue='', when='all'):
         """List events."""
-        if promoter:
-            promoter = '&promoter=' + promoter
-        else:
-            promoter = ""
-
-        if venue:
-            venue = '&venue=' + venue
-        else:
-            venue = ""
-
+        extras = '&promoter=' + promoter + '&venue=' + venue
         if when == 'upcoming':
             events = self.api_call(
                 '/league/list/events/?ordering=start_date&start_date__gt=' + \
-                self.yesterday + promoter + venue
+                self.yesterday + extras
             )
         elif when == 'past':
             events = self.api_call(
                 '/league/list/events/?ordering=start_date&start_date__lt=' + \
-                self.today + promoter + venue
+                self.today + extras
             )
         else:
             events = self.api_call(
@@ -128,27 +128,52 @@ class Private(object):
         self.today = str(date.today())
         self.yesterday = str(date.today()  - timedelta(days=1))
 
-    def api_call(self, endpoint, method='GET', data=None):
+    def api_call(self, endpoint, method='GET', json=None):
         """Makes an API call to the back-end server."""
         headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Token ' + self.token
         }
         if method == 'GET':
-            return requests.get(API_URL + endpoint, headers=headers).json()
+            r = requests.get(API_URL + endpoint, headers=headers)
         elif method == 'POST':
-            return requests.post(
-                API_URL + endpoint, headers=headers, data=data
-            ).json()
+            r = requests.post(
+                API_URL + endpoint, headers=headers, json=json
+            )
+        elif method == 'PATCH':
+            r = requests.patch(
+                API_URL + endpoint, headers=headers, json=json
+            )
+        if str(r.status_code).startswith('2'):
+            return r.json()
+        else:
+            return r.status_code
+
+    def create_ticket(self, ticket_type):
+        """Create a ticket."""
+        json = {'ticket_type': ticket_type}
+        ticket = self.api_call('/league/create/ticket/', 'POST', json)
+        return ticket
 
     def get_account(self):
         """Retrieve the user's account."""
         account = self.api_call('/user/me')
         return account
 
+    def vote_ticket(self, code, vote):
+        """Vote."""
+        json = {'vote': vote}
+        ticket = self.api_call('/league/vote/ticket/' + code + '/', 'PATCH', json)
+        return ticket
+
+    def get_ticket(self, code):
+        """Retrieve a ticket that is owned by the user."""
+        ticket = self.api_call('/league/ticket/' + code)
+        return ticket
+
     def list_tickets(self, when='all'):
         """List the user's tickets."""
-        response = self.api_call('/league/list/tickets')
+        response = self.api_call('/league/list/tickets?ordering=ticket_type__event__start_date')
         tickets = []
         for ticket in response:
             if (when == 'past' and ticket['event_start_date'] < self.today) or \

@@ -6,6 +6,7 @@ import stripe
 
 from app import app
 from app.wrapper import Public, Private
+from app.superuser import Superuser
 from app.forms import LoginForm, RegisterForm, AddressForm
 
 stripe_keys = {
@@ -15,6 +16,7 @@ stripe_keys = {
 
 stripe.api_key = stripe_keys['secret_key']
 pub = Public()
+su = Superuser()
 
 
 ########## Helper functions ##########
@@ -104,6 +106,13 @@ def remove_from_cart():
             session['cart'].remove(item)
     return jsonify(result=session['cart'])
 
+@app.route('/_vote')
+def vote():
+    code = request.args.get('code')
+    tally = request.args.get('tally')
+    ticket = Private(session['token']).vote_ticket(code, tally)
+    return jsonify(result=ticket)
+
 
 ########## URL routes ##########
 
@@ -184,14 +193,32 @@ def cart():
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
     """Checkout page."""
-    if 'token' in session:
-        account = Private(session['token']).get_account()
-    else:
-        account = None
     cart = load_cart()
     cart_total = calculate_cart_total(cart)
     login_form = LoginForm(prefix='login_form')
     register_form = RegisterForm(prefix='register_form')
+    if 'token' in session:
+        account = Private(session['token']).get_account()
+        amount = int(float(cart_total)) * 100
+        customer = stripe.Customer.create(email=account['email'])
+        intent = stripe.PaymentIntent.create(
+            amount=amount,
+            customer=customer.id,
+            description='Ticket purchase',
+            currency='gbp',
+            confirmation_method='manual',
+        )
+        return render_template(
+            'checkout.html',
+            account=account,
+            cart=cart,
+            cart_total=cart_total,
+            intent=intent,
+            login_form=login_form,
+            register_form=register_form
+        )
+    else:
+        account = None
     if login_form.validate_on_submit():
         sign_in_or_register(method='login', form=request.form)
         return redirect(url_for('checkout'))
@@ -205,39 +232,43 @@ def checkout():
         cart_total=cart_total,
         login_form=login_form,
         register_form=register_form,
-        key=stripe_keys['publishable_key']
     )
 
-@app.route('/charge/<email>/<total>', methods=['POST'])
-def charge(email, total):
+@app.route('/charge/<intent_id>', methods=['POST'])
+def charge(intent_id):
     try:
-        amount = int(float(total)) * 100    # amount in pence
-        customer = stripe.Customer.create(
-            email=email
+        payment_method = stripe.PaymentMethod.create(
+          type='card',
+          card={'token': request.form['stripeToken']}
         )
-        stripe.PaymentIntent.create(
-            amount=amount,
-            customer=customer.id,
-            description='Ticket purchase',
-            currency='gbp',
+        intent = stripe.PaymentIntent.modify(
+            intent_id,
+            payment_method=payment_method.id,
+            save_payment_method=True
         )
-        session.pop('cart', None)
-        return render_template('charge.html', amount=amount)
+        intent = stripe.PaymentIntent.confirm(intent_id)
+        if intent.status == 'succeeded':
+            account = Private(session['token']).get_account()
+            credit = Decimal(account['credit']) + (Decimal(intent.amount) / 100)
+            new_credit = su.manage_credit(account['id'], credit)
+            for item in session['cart']:
+                quantity = 0
+                while quantity < item['quantity']:
+                    ticket = Private(
+                        session['token']
+                    ).create_ticket(item['ticket_type'])
+                    quantity += 1
+            session.pop('cart', None)
+            return render_template('charge.html')
     except stripe.error.StripeError as e:
         body = e.json_body
         err  = body.get('error', {})
         print("Status is: %s" % e.http_status)
         print("Type is: %s" % err.get('type'))
         print("Code is: %s" % err.get('code'))
-        # param is '' in this case
         print("Param is: %s" % err.get('param'))
         print("Message is: %s" % err.get('message'))
         return render_template('error.html')
-
-@app.route('/ticket/<code>')
-def ticket(code):
-    """Ticket page."""
-    return render_template('ticket.html')
 
 @app.route('/artist/<slug>')
 def artist(slug):
@@ -278,8 +309,39 @@ def venue(slug):
         upcoming_events=upcoming_events
     )
 
-@app.route('/id/<id>')
+@app.route('/<int:id>')
 def event(id):
     """Event page."""
     event = pub.get_event(id)
     return render_template('event.html', event=event)
+
+@app.route('/<code>', methods=['GET', 'POST'])
+def ticket(code):
+    """Ticket page."""
+    if 'token' in session:
+        account = Private(session['token']).get_account()
+        ticket = Private(session['token']).get_ticket(code)
+    else:
+        account = None
+        ticket = pub.get_ticket(code)
+
+    if isinstance(ticket, int):
+        return redirect(url_for('index'))
+    else:
+        lineup = pub.list_tallies(event_id=ticket['event_id'])
+        login_form = LoginForm(prefix='login_form')
+        register_form = RegisterForm(prefix='register_form')
+        if login_form.validate_on_submit():
+            sign_in_or_register(method='login', form=request.form)
+            return redirect(url_for('ticket', code=code))
+        if register_form.validate_on_submit():
+            sign_in_or_register(method='register', form=request.form)
+            return redirect(url_for('ticket', code=code))
+        return render_template(
+            'ticket.html',
+            account=account,
+            ticket=ticket,
+            lineup=lineup,
+            login_form=login_form,
+            register_form=register_form
+        )
