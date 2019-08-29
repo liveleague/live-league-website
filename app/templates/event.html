@@ -65,7 +65,7 @@
                     <td>{{ row['name'] }}</td>
                     <td>£{{ row['price'] }}</td>
                     <td>{{ row['tickets_remaining'] }}</td>
-                    <td><input type="number" class="form-control quantity-input" placeholder="Enter quantity"></td>
+                    <td><input type="number" class="form-control quantity-input"></td>
                     <td><a href="#" class="add-to-cart" data-id="{{ row['slug'] }}"><i class="fas fa-cart-plus"></i></a></td>
                   </tr>
               {% endfor %}

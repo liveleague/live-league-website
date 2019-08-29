@@ -8,7 +8,7 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet">
     <!-- Icons -->
-    <link type="text/css" href="{{ url_for('static', filename='vendor/nucleo/css/nucleo-icons.css') }}" rel="stylesheet">
+    <link type="text/css" href="{{ url_for('static', filename='css/nucleo-icons.css') }}" rel="stylesheet">
     <link type="text/css" href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <!-- BLK• CSS -->
     <link type="text/css" href="{{ url_for('static', filename='css/blk-design-system.css') }}" rel="stylesheet">
@@ -19,8 +19,6 @@
     <script type=text/javascript>
       $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </script>
-    <!-- Optional plugins -->
-    <script src="{{ url_for('static', filename='vendor/PLUGIN_FOLDER/PLUGIN_SCRIPT.js') }}"></script>
     <!-- BLK• JS -->
     <script src="{{ url_for('static', filename='js/blk-design-system.js') }}"></script>
     <!-- Stripe -->
@@ -32,32 +30,48 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-dark">
       <div class="container">
-        <a class="navbar-brand" href="{{ url_for('index') }}"><b>LIVE LEAGUE</b></a>
+        <a href="{{ url_for('index') }}"><b>LIVE LEAGUE</b></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-bar navbar-kebab"></span>
         <span class="navbar-toggler-bar navbar-kebab"></span>
         <span class="navbar-toggler-bar navbar-kebab"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="nav justify-content-end">
+
+            <div class="navbar-collapse-header">
+              <div class="row">
+                <div class="col-6 collapse-brand">
+                  <a href="{{ url_for('index') }}">LIVE LEAGUE</a>
+                </div>
+                <div class="col-6 collapse-close text-right">
+                  <button type="button" class="navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="tim-icons icon-simple-remove"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          <ul class="navbar-nav">
+            <li class="nav-item">
+            </li>
             <li class="nav-item">
               <a class="nav-link active" href="{{ url_for('about') }}">About</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('list', category='events') }}">Events</a>
+              <a class="nav-link active" href="{{ url_for('list', category='events') }}">Events</a>
             </li>
             <li class="nav-item">
               {% if session.token %}
-                <a class="nav-link" href="{{ url_for('account') }}">Account</a>
+                <a class="nav-link active" href="{{ url_for('account') }}">Account</a>
               {% else %}
-                <a class="nav-link" href="{{ url_for('sign_in') }}">Sign In</a>
+                <a class="nav-link active" href="{{ url_for('sign_in') }}">Sign In</a>
               {% endif %}
             </li>
             <li class="nav-item">
               {% if cart_quantities == 0 %}
-                <a class="nav-link" href="{{ url_for('cart') }}" id="nav-cart"><i class="fas fa-shopping-cart"></i></a>
+                <a class="nav-link active" href="{{ url_for('cart') }}" id="nav-cart"><i class="fas fa-shopping-cart"></i></a>
               {% else %}
-                <a class="nav-link" href="{{ url_for('cart') }}" id="nav-cart"><i class="fas fa-shopping-cart"></i> {{ cart_quantities }}</a>
+                <a class="nav-link active" href="{{ url_for('cart') }}" id="nav-cart"><i class="fas fa-shopping-cart"></i> {{ cart_quantities }}</a>
               {% endif %}
             </li>
           </ul>

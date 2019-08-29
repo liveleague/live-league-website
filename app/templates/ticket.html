@@ -15,6 +15,11 @@
           <p><h6>Start: </h6>{{ ticket.event_start_date|date('full') }} - {{ ticket.event_start_time|time('12') }}</p>
           <p><h6>Code: </h6>{{ ticket.code }}</p>
           <p><h6>Type: </h6>{{ ticket.ticket_type }}</p>
+          <p><h6>Price: </h6>£{{ price }}</p>
+          {% if not ticket.owner %}
+            <p>&nbsp;</p>
+            <p>If this ticket didn't cost £{{ price }}, please <a href="{{ url_for('contact') }}">contact us</a></p>
+          {% endif %}
           {% if account %}
             {% if ticket.vote_artist %}
               <p><h6>Vote: </h6>

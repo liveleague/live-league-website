@@ -15,7 +15,7 @@
           <p><h6>Email: </h6>{{ account.email }}</p>
           <p><h6>Credit: </h6>£{{ account.credit }}</p>
           <p>&nbsp;</p>
-          <button type="button" class="btn btn-success btn-sm">Edit</button>
+          <button type="button" class="btn btn-success btn-sm" disabled>Edit</button>
           <a href="{{ url_for('sign_out') }}" type="button" class="btn btn-warning btn-sm">Sign Out</a>
           <p>&nbsp;</p>
           {% if account.facebook %}
@@ -131,7 +131,7 @@
             </table>
         {% endif %}
         {% if upcoming_events %}
-          <!-- Table (Upcoming Events) -->
+          <!-- Table (Upcoming Events - Artists Only) -->
           <p>&nbsp;</p>
             <table class="table">
               <thead>
@@ -156,7 +156,7 @@
             </table>
         {% endif %}
         {% if past_events %}
-          <!-- Table (Past Events) -->
+          <!-- Table (Past Events - Artists Only) -->
           <p>&nbsp;</p>
             <table class="table">
               <thead>

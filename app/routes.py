@@ -176,11 +176,21 @@ def account():
     account = Private(session['token']).get_account()
     past_tickets = Private(session['token']).list_tickets(when='past')
     upcoming_tickets = Private(session['token']).list_tickets(when='upcoming')
+    if account['is_artist']:
+        past_events = pub.list_tallies(when='past', slug=account['slug'])
+        upcoming_events = pub.list_tallies(
+            when='upcoming', slug=account['slug']
+        )
+    else:
+        past_events = None
+        upcoming_events = None
     return render_template(
         'account.html',
         account=account,
         past_tickets=past_tickets,
-        upcoming_tickets=upcoming_tickets
+        upcoming_tickets=upcoming_tickets,
+        past_events=past_events,
+        upcoming_events=upcoming_events
     )
 
 @app.route('/cart')
@@ -328,6 +338,7 @@ def ticket(code):
     if isinstance(ticket, int):
         return redirect(url_for('index'))
     else:
+        price = pub.get_ticket_type(ticket['ticket_type_slug'])['price']
         lineup = pub.list_tallies(event_id=ticket['event_id'])
         login_form = LoginForm(prefix='login_form')
         register_form = RegisterForm(prefix='register_form')
@@ -341,7 +352,13 @@ def ticket(code):
             'ticket.html',
             account=account,
             ticket=ticket,
+            price=price,
             lineup=lineup,
             login_form=login_form,
             register_form=register_form
         )
+
+@app.route('/contact')
+def contact():
+    """Contact page."""
+    return render_template('contact.html')

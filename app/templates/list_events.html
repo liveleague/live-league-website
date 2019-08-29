@@ -16,6 +16,7 @@
           <table class="table">
             <thead>
                 <tr>
+                    <th></th>
                     <th>Start Date</th>
                     <th>Start Time</th>
                     <th>End Date</th>
@@ -30,6 +31,11 @@
             <tbody>
             {% for row in data %}
                 <tr>
+                    {% if row['image'] %}
+                      <td><a href="{{ url_for('event', id=row['id']) }}"><img src="{{ row['image'] }}" class="img-rounded img-thumbnail-medium"></a></td>
+                    {% else %}
+                      <td></td>
+                    {% endif %}
                     <td>{{ row['start_date']|date('full') }}</td>
                     <td>{{ row['start_time'][:-3] }}</td>
                     <td>{{ row['end_date']|date('full') }}</td>
