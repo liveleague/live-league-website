@@ -122,3 +122,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Vagrant
+.vagrant
+Vagrantfile
+
+# Hosting
+app.sock
