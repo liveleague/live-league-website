@@ -15,7 +15,11 @@
           <p>{{ artist.description }}</p>
           <p>&nbsp;</p>
         {% endif %}
-        <p><h6>Points: </h6>{{ artist.points }}</p>
+        {% if artist.points %}
+          <p><h6>Points: </h6>{{ artist.points }}</p>
+        {% else %}
+          <p><h6>Points: </h6>0</p>
+        {% endif %}
         <p>&nbsp;</p>
         {% if artist.facebook %}
           <i class="fab fa-facebook"></i><a href="{{ artist.facebook }}"> Facebook</a>
@@ -64,7 +68,11 @@
                   <tr>
                       <td>{{ row['event_start_date'] }}</td>
                       <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
-                      <td>{{ row['points'] }}</td>
+                      {% if row['points'] %}
+                        <td>{{ row['points'] }}</td>
+                      {% else %}
+                        <td>0</td>
+                      {% endif %}
                   </tr>
               {% endfor %}
               </tbody>
@@ -89,7 +97,11 @@
                   <tr>
                       <td>{{ row['event_start_date'] }}</td>
                       <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
-                      <td>{{ row['points'] }}</td>
+                      {% if row['points'] %}
+                        <td>{{ row['points'] }}</td>
+                      {% else %}
+                        <td>0</td>
+                      {% endif %}
                   </tr>
               {% endfor %}
               </tbody>

@@ -41,7 +41,11 @@
                   <td class="text-center">{{ standings.index(row) + 1 }}</td>
                   <td><a href="{{ url_for('artist', slug=row['slug']) }}">{{ row['name'] }}</a></td>
                   <td>{{ row['event_count'] }}</td>
-                  <td>{{ row['points'] }}</td>
+                  {% if row['points'] %}
+                    <td>{{ row['points'] }}</td>
+                  {% else %}
+                    <td>0</td>
+                  {% endif %}
               </tr>
           {% endfor %}
           </tbody>

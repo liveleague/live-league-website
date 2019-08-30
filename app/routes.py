@@ -122,7 +122,8 @@ def index():
     standings = pub.list_table_rows()
     prize_pool = 0
     for row in standings:
-        prize_pool += row['points']
+        if row['points']:
+            prize_pool += row['points']
     upcoming_events = pub.list_events(when='upcoming')
     print(session)
     return render_template(

@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 import requests
 
-API_URL = 'http://46.101.31.33:8000'
+API_URL = 'https://api.liveleague.events'
 
 
 class Public(object):

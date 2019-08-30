@@ -37,7 +37,11 @@
               {% for row in event.lineup %}
                   <tr>
                       <td><a href="{{ url_for('artist', slug=row['artist_slug']) }}">{{ row['artist'] }}</a></td>
-                      <td>{{ row['points'] }}</td>
+                      {% if row['points'] %}
+                        <td>{{ row['points'] }}</td>
+                      {% else %}
+                        <td>0</td>
+                      {% endif %}
                   </tr>
               {% endfor %}
               </tbody>
