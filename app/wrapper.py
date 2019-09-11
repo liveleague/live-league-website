@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from operator import itemgetter
 import requests
 
 API_URL = 'https://api.liveleague.events'
@@ -10,6 +11,7 @@ class Public(object):
     def __init__(self):
         self.today = str(date.today())
         self.yesterday = str(date.today()  - timedelta(days=1))
+        self.now = str(datetime.now().time())
 
     def api_call(self, endpoint, method='GET', json=None):
         """Makes an API call to the back-end server."""
@@ -22,11 +24,23 @@ class Public(object):
         else:
             return r.status_code
 
+    def user_exists(self, email):
+        """Check if an email address belongs to a user."""
+        json = {'email': email}
+        exists = self.api_call('/user/exists/', 'POST', json)
+        return exists
+
     def create_user(self, email, password, name):
         """Create a user."""
         json = {'email': email, 'password': password, 'name': name}
         user = self.api_call('/user/create/', 'POST', json)
         return user
+
+    def create_temporary_user(self, email):
+        """Create a temporary user."""
+        json = {'email': email}
+        temporary_user = self.api_call('/user/create/temporary', 'POST', json)
+        return temporary_user
 
     def get_token(self, email, password):
         """Retrieve a token or create one for the first time."""
@@ -89,34 +103,63 @@ class Public(object):
         )
         tallies = []
         for tally in response:
-            if (when == 'past' and tally['event_start_date'] < self.today) or \
-               (when == 'upcoming' and tally['event_start_date'] > self.yesterday) or \
-               when not in ['past', 'upcoming']:
+            if when == 'past':
+                if tally['event_end_date'] < self.today or \
+                (tally['event_end_date'] == self.today and \
+                tally['event_end_time'] <= self.now):
                     tallies.append(tally)
+            elif when == 'upcoming':
+                if tally['event_end_date'] > self.today or \
+                (tally['event_end_date'] == self.today and \
+                tally['event_end_time'] >= self.now):
+                    tallies.append(tally)
+            else:
+                tallies.append(tally)
         return tallies
 
     def list_table_rows(self):
         """List table rows for artists in the league."""
-        table_rows = self.api_call('/league/list/table-rows/?ordering=-points')
+        response = self.api_call('/league/list/table-rows/?ordering=-points')
+        table_rows = []
+        for item in response:
+            table_row = {}
+            for key in item:
+                if key == 'points':
+                    if item[key] is None:
+                        table_row[key] = 0
+                    else:
+                        table_row[key] = item[key]
+                else:
+                    table_row[key] = item[key]
+            table_rows.append(table_row)
+        table_rows = sorted(table_rows, key=itemgetter('name'))
+        table_rows = sorted(
+            table_rows, key=itemgetter('points'), reverse=True
+        )
+        table_rows = sorted(
+            table_rows, key=itemgetter('event_count'), reverse=True
+        )
         return table_rows
 
     def list_events(self, promoter='', venue='', when='all'):
         """List events."""
-        extras = '&promoter=' + promoter + '&venue=' + venue
-        if when == 'upcoming':
-            events = self.api_call(
-                '/league/list/events/?ordering=start_date&start_date__gt=' + \
-                self.yesterday + extras
-            )
-        elif when == 'past':
-            events = self.api_call(
-                '/league/list/events/?ordering=start_date&start_date__lt=' + \
-                self.today + extras
-            )
-        else:
-            events = self.api_call(
-                '/league/list/events/?ordering=start_date' + promoter + venue
-            )
+        response = self.api_call('/league/list/events/?ordering=start_date' + \
+            '&promoter=' + promoter + '&venue=' + venue
+        )
+        events = []
+        for event in response:
+            if when == 'past':
+                if event['end_date'] < self.today or \
+                (event['end_date'] == self.today and \
+                event['end_time'] <= self.now):
+                    events.append(event)
+            elif when == 'upcoming':
+                if event['end_date'] > self.today or \
+                (event['end_date'] == self.today and \
+                event['end_time'] >= self.now):
+                    events.append(event)
+            else:
+                events.append(event)
         return events
 
 
@@ -127,6 +170,7 @@ class Private(object):
         self.token = token
         self.today = str(date.today())
         self.yesterday = str(date.today()  - timedelta(days=1))
+        self.now = str(datetime.now().time())
 
     def api_call(self, endpoint, method='GET', json=None):
         """Makes an API call to the back-end server."""
@@ -159,11 +203,19 @@ class Private(object):
         """Retrieve the user's account."""
         account = self.api_call('/user/me')
         return account
+    
+    def update_address_zip(self):
+        """Update the user's postcode."""
+        json = {'address_zip': address_zip}
+        address_zip = self.api_call('/user/me', 'PATCH', json)
+        return address_zip
 
     def vote_ticket(self, code, vote):
         """Vote."""
         json = {'vote': vote}
-        ticket = self.api_call('/league/vote/ticket/' + code + '/', 'PATCH', json)
+        ticket = self.api_call(
+            '/league/vote/ticket/' + code + '/', 'PATCH', json
+        )
         return ticket
 
     def get_ticket(self, code):
@@ -173,11 +225,21 @@ class Private(object):
 
     def list_tickets(self, when='all'):
         """List the user's tickets."""
-        response = self.api_call('/league/list/tickets?ordering=ticket_type__event__start_date')
+        response = self.api_call(
+            '/league/list/tickets?ordering=ticket_type__event__start_date'
+        )
         tickets = []
         for ticket in response:
-            if (when == 'past' and ticket['event_start_date'] < self.today) or \
-               (when == 'upcoming' and ticket['event_start_date'] > self.yesterday) or \
-               when not in ['past', 'upcoming']:
+            if when == 'past':
+                if ticket['event_end_date'] < self.today or \
+                (ticket['event_end_date'] == self.today and \
+                ticket['event_end_time'] <= self.now):
                     tickets.append(ticket)
+            elif when == 'upcoming':
+                if ticket['event_end_date'] > self.today or \
+                (ticket['event_end_date'] == self.today and \
+                ticket['event_end_time'] >= self.now):
+                    tickets.append(ticket)
+            else:
+                tickets.append(ticket)
         return tickets

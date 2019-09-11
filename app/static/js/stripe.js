@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
   // Create a Stripe client.
-  var stripe = Stripe('pk_test_ZVBSjZUloB7yZkku3XtHO7el');
+  var stripe = Stripe('pk_live_MHlS4I7NN4fGQKiR3JUfSMnZ');
 
   // Create an instance of Elements.
   var elements = stripe.elements();
@@ -25,7 +25,7 @@ $(document).ready(function() {
   };
 
   // Create an instance of the card Element.
-  var card = elements.create('card', {style: style, hidePostalCode: true});
+  var card = elements.create('card', {style: style, hidePostalCode: false});
 
   // Add an instance of the card Element into the `card-element` <div>.
   card.mount('#card-element');

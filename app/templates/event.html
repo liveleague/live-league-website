@@ -46,12 +46,12 @@
               {% endfor %}
               </tbody>
             </table>
-        {% endif %}
-        {% if event.ticket_types %}
-          <!-- Table (Buy tickets) -->
-          <p>&nbsp;</p>
-            <table class="table">
-              <thead>
+          {% endif %}
+          {% if not past and tickets%}
+            <!-- Table (Buy tickets) -->
+            <p>&nbsp;</p>
+              <table class="table">
+                <thead>
                   <tr>
                       <td colspan="5"><b>BUY TICKETS</b></td>
                   </tr>
@@ -64,41 +64,46 @@
                   </tr>
               </thead>
               <tbody>
-              {% for row in event.ticket_types %}
-                  <tr>
-                    <td>{{ row['name'] }}</td>
-                    <td>£{{ row['price'] }}</td>
-                    <td>{{ row['tickets_remaining'] }}</td>
-                    <td><input type="number" class="form-control quantity-input"></td>
-                    <td><a href="#" class="add-to-cart" data-id="{{ row['slug'] }}"><i class="fas fa-cart-plus"></i></a></td>
-                  </tr>
-              {% endfor %}
-              <script type=text/javascript>
-                $(document).ready(function() {
-                  $(function() {
-                    $(".add-to-cart").click(function() {
-                      var slug = $(this).data("id");
-                      var number = $(this).closest("tr").find(".quantity-input").val();
-                      if (number > 0) {
-                        $.getJSON($SCRIPT_ROOT + "/_add_to_cart", {
-                          ticket_type: slug,
-                          quantity: number,
-                        }, function(data) {
-                          if (data.result['ticket_type'] == slug && data.result['quantity'] == number) {
-                            location.reload();
-                          }
-                        });
-                        return false;
-                      } else {
-                        location.reload();
-                      }
-                    });
+                {% for row in event.ticket_types %}
+                  {% if row['tickets_remaining'] > 0 %}
+                    <tr>
+                      <td>{{ row['name'] }}</td>
+                      <td>£{{ row['price'] }}</td>
+                      <td>{{ row['tickets_remaining'] }}</td>
+                      <td><input type="number" class="form-control quantity-input"></td>
+                      <td><a href="#" class="add-to-cart" data-id="{{ row['slug'] }}"><i class="fas fa-cart-plus"></i></a></td>
+                    </tr>
+                  {% endif %}
+                {% endfor %}
+            <script type=text/javascript>
+              $(document).ready(function() {
+                $(function() {
+                  $(".add-to-cart").click(function() {
+                    var slug = $(this).data("id");
+                    var number = $(this).closest("tr").find(".quantity-input").val();
+                    if (number == "") {
+                      number = 1;
+                    }
+                    if (number > 0) {
+                      $.getJSON($SCRIPT_ROOT + "/_add_to_cart", {
+                        ticket_type: slug,
+                        quantity: number,
+                      }, function(data) {
+                        if (data.result["ticket_type"] == slug && data.result["quantity"] == number) {
+                          location.reload();
+                        }
+                      });
+                      return false;
+                    } else {
+                      location.reload();
+                    }
                   });
                 });
+              });
               </script>
               </tbody>
             </table>
-        {% endif %}
+          {% endif %}
       </span>
     </div>
     <div class="col-sm">
@@ -108,7 +113,11 @@
           <p>&nbsp;</p>
         {% endif %}
         {% if event.venue_google_maps %}
-          {{ event.venue_google_maps|safe }}
+          <span style="max-width: 10px;">
+            <!-- Need to make the google embed '600 x 450' on PC and '340 x 225' on mobile -->
+            <!-- Easiest way to do this is have two API fields (big embed and small embed) then do a test for mobile -->
+            {{ event.venue_google_maps|safe }}
+          </span>
         {% endif %}
       </span>
     </div>

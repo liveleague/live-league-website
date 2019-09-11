@@ -64,20 +64,20 @@
             <form action="" method="post" novalidate>
               {{ form.hidden_tag() }}
 
-                <!-- Email -->
+                <!-- Password -->
                 <div class="form-group">
-                  {{ form.email.label(for="exampleInputEmail1") }}
+                  {{ form.password.label(for="exampleInputPassword1") }}
 
-                  {{ form.email(id="email-input", type="email", class="form-control", placeholder="Enter email", **{'aria-describedby':"emailHelp"}) }}
+                  {{ form.password(id="login-password-input", type="password", class="form-control", placeholder="Enter password") }}
 
-                  {% for error in form.email.errors %}
+                  {% for error in form.password.errors %}
                     <span id="form-errors" style="color: white;">[{{ error }}]</span>
                   {% endfor %}
                 </div>
 
               <p>&nbsp;</p>
               <!-- Submit button -->
-              {{ form.submit(id="submit-btn", type="submit", class="btn btn-primary", value="Submit") }}
+              {{ form.submit(id="form-submit-btn", type="submit", class="btn btn-primary", value="Submit") }}
               <p>&nbsp;</p>
 
             </form>

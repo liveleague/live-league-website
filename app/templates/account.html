@@ -15,7 +15,7 @@
           <p><h6>Email: </h6>{{ account.email }}</p>
           <p><h6>Credit: </h6>£{{ account.credit }}</p>
           <p>&nbsp;</p>
-          <button type="button" class="btn btn-success btn-sm" disabled>Edit</button>
+            <button type="button" class="btn btn-success btn-sm" disabled>Edit</button>
           <a href="{{ url_for('sign_out') }}" type="button" class="btn btn-warning btn-sm">Sign Out</a>
           <p>&nbsp;</p>
           {% if account.facebook %}
@@ -83,20 +83,50 @@
                 <tbody>
                 {% for row in upcoming_tickets %}
                     <tr>
-                        <td><a href="{{ url_for('ticket', code=row['code']) }}">{{ row['code'] }}</td>
+                        <td><a class="ticket-code" href="{{ url_for('ticket', code=row['code']) }}">{{ row['code'] }}</td>
                         <td>{{ row['event_start_date'] }}</td>
                         <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
                         <td>{{ row['ticket_type'] }}</td>
                         {% if row['vote_artist'] %}
                           <td><a href="{{ url_for('artist', slug=row['vote_slug']) }}">{{ row['vote_artist'] }}</a></td>
                         {% else %}
-                          <td><a href="{{ url_for('ticket', code=row['code']) }}"><button class="btn btn-primary btn-sm">Vote</button></a></td>
+                          <td>
+                            <div class="dropdown">
+                              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Vote
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                {% for item in row['lineup'] %}
+                                  <a class="dropdown-item dropdown-vote" data-code="{{ row['code'] }}" data-tally="{{ item['slug'] }}" href="#">{{ item['artist'] }}</a>
+                                {% endfor %}
+                              </div>
+                            </div>
+                          </td>
                         {% endif %}
                     </tr>
                 {% endfor %}
                 </tbody>
               </table>
           {% endif %}
+
+          <script type=text/javascript>
+            $(document).ready(function() {
+              $(".dropdown-vote").click(function() {
+                var code = $(this).data("code");
+                var tally = $(this).data("tally");
+                  $.getJSON($SCRIPT_ROOT + "/_vote", {
+                    code: code,
+                    tally: tally,
+                  }, function(data) {
+                    if (data.result['vote'] == tally && data.result['owner'] == "{{ account.name }}") {
+                      location.reload();
+                    }
+                  });
+                  return false;
+              });
+            });
+          </script>
+
           {% if past_tickets %}
           <!-- Table (Past Tickets) -->
           <p>&nbsp;</p>
@@ -121,9 +151,20 @@
                       <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
                       <td>{{ row['ticket_type'] }}</td>
                       {% if row['vote_artist'] %}
-                        <td><a href="{{ url_for('artist', slug=row['vote_artist_slug']) }}">{{ row['vote_artist'] }}</a></td>
+                        <td><a href="{{ url_for('artist', slug=row['vote_slug']) }}">{{ row['vote_artist'] }}</a></td>
                       {% else %}
-                        <td><a href="{{ url_for('ticket', code=row['code']) }}"><button class="btn btn-primary btn-sm">Vote</button></a></td>
+                        <td>
+                          <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Vote
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                              {% for item in row['lineup'] %}
+                                <a class="dropdown-item dropdown-vote" data-code="{{ row['code'] }}" data-tally="{{ item['slug'] }}" href="#">{{ item['artist'] }}</a>
+                              {% endfor %}
+                            </div>
+                          </div>
+                        </td>
                       {% endif %}
                   </tr>
               {% endfor %}
@@ -184,8 +225,17 @@
       </div>
       <div class="col-sm">
         <span>
+          <h2>Win <b>£100</b> in our social media contest:</h2>
+          <ol>
+            <h4>
+              <li>Add <span style="color: #CA52E4;">@livemusicleague</span> on <a href="{{ url_for('social', platform='instagram') }}"><u>Instagram</u></a> or <a href="{{ url_for('social', platform='twitter') }}"><u>Twitter</u></a></li><br>
+              <li>Mention <span style="color: #CA52E4;">@livemusicleague</span> in a post</li><br>
+              <li>Post of the month wins £100!</li>
+            </h4>
+          </ol>
+          <p>&nbsp;</p>
           {% if account.image %}
-            <img src="{{ account.image }}">
+            <img src="{{ account.image }}" height="200" width="200">
           {% endif %}
         </span>
       </div>

@@ -36,9 +36,9 @@
                     {% else %}
                       <td></td>
                     {% endif %}
-                    <td>{{ row['start_date']|date('full') }}</td>
+                    <td>{{ row['start_date']|date('small') }}</td>
                     <td>{{ row['start_time'][:-3] }}</td>
-                    <td>{{ row['end_date']|date('full') }}</td>
+                    <td>{{ row['end_date']|date('small') }}</td>
                     <td>{{ row['end_time'][:-3] }}</td>
                     <td><a href="{{ url_for('event', id=row['id']) }}">{{ row['name'] }}</a></td>
                     <td><a href="{{ url_for('venue', slug=row['venue_slug']) }}">{{ row['venue'] }}</a></td>

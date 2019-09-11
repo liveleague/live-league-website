@@ -6,9 +6,10 @@ def format_date(value, format):
         return ""
     else:
         old_format = '%Y-%m-%d'
-        new_format = '%d %B %Y'
         if format == 'full':
-            return datetime.strptime(value, old_format).strftime(new_format)
+            return datetime.strptime(value, old_format).strftime('%d %B %Y')
+        if format == 'small':
+            return datetime.strptime(value, old_format).strftime('%b-%d')
 
 def format_time(value, format):
     """Format a time."""
@@ -16,8 +17,8 @@ def format_time(value, format):
         return ""
     else:
         old_format = '%H:%M:%S'
-        new_format = '%I %p'
         if format == '12':
+            new_format = '%I:%M %p'
             return datetime.strptime(
                 value, old_format
             ).strftime(new_format).lstrip("0").replace(" 0", " ")

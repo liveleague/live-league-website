@@ -11,7 +11,7 @@
         <!-- Column 1 of 1 -->
         <span>
           <h1><b>The UK's biggest underground music competition</b></h1>
-          <h3><b>£{{ '{:,}'.format(1000 + prize_pool) }} guaranteed prize pool</b></h3>
+          <h3><b>£{{ '{:,}'.format(1000 + (prize_pool|int)) }} guaranteed prize pool... <a href="{{ url_for('about') }}">and counting</a></b></h3>
         </span>
       </div>
     </div>
@@ -41,6 +41,7 @@
                   <td class="text-center">{{ standings.index(row) + 1 }}</td>
                   <td><a href="{{ url_for('artist', slug=row['slug']) }}">{{ row['name'] }}</a></td>
                   <td>{{ row['event_count'] }}</td>
+
                   {% if row['points'] %}
                     <td>{{ row['points'] }}</td>
                   {% else %}
@@ -80,7 +81,7 @@
                   {% else %}
                     <td></td>
                   {% endif %}
-                  <td>{{ row['start_date'] }}</td>
+                  <td>{{ row['start_date']|date('small') }}</td>
                   <td>{{ row['start_time'][:-3] }}</td>
                   <td><a href="{{ url_for('event', id=row['id']) }}">{{ row['name'] }}</a></td>
                   <td><a href="{{ url_for('venue', slug=row['venue_slug']) }}">{{ row['venue'] }}</a></td>

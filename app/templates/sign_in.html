@@ -56,6 +56,9 @@
               {% for error in login_form.email.errors %}
                 <span style="color: white;">[{{ error }}]</span>
               {% endfor %}
+              {% for error in register_form.email.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
             </div>
 
             <!-- Password -->
@@ -68,13 +71,7 @@
               {% for error in login_form.password.errors %}
                 <span style="color: white;">[{{ error }}]</span>
               {% endfor %}
-            </div>
-
-            <!-- Confirm password (register only) -->
-            <div id="confirm-password-div" class="form-group"  style="display: none;">
-              {{ register_form.confirm.label(for="exampleInputPassword2") }}
-              {{ register_form.confirm(type="password", class="form-control", id="exampleInputPassword2", placeholder="Enter password again") }}
-              {% for error in register_form.confirm.errors %}
+              {% for error in register_form.password.errors %}
                 <span style="color: white;">[{{ error }}]</span>
               {% endfor %}
             </div>
@@ -85,6 +82,9 @@
             {{ login_form.submit(id="login-submit-btn", type="submit", class="btn btn-primary") }}
             {{ register_form.submit(id="register-submit-btn", style="display: none;", type="submit", class="btn btn-primary") }}
           </form>
+
+          <p>&nbsp;</p>
+          <a href="{{ url_for('verify') }}">Forgot your password?</a>
 
           <script>
             $(document).ready(function() {

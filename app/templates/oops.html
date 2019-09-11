@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Oops{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <span>
+            <!-- Main -->
+            <h1 id="main-header"><b>Oops! - {{ message }}</b></h1>
+            <h3><b>Something went wrong (error code {{ code }})</b></h3>
+            <p>&nbsp;</p>
+            <p>The website is probably down for maintenance right now - please come back in a few minutes time.</p>
+            <p>&nbsp;</p>
+            <p>If the error persists, please contact us at <u>support@liveleague.events</u></p>
+        </span>
+      </div>
+
+      <div class="col-sm">
+        <span>
+
+        </span>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
