@@ -2,7 +2,7 @@ from datetime import date, datetime, timedelta
 from operator import itemgetter
 import requests
 
-API_URL = 'https://api.liveleague.events'
+API_URL = 'https://api.livemusicleague.com'
 
 
 class Public(object):
@@ -134,10 +134,10 @@ class Public(object):
             table_rows.append(table_row)
         table_rows = sorted(table_rows, key=itemgetter('name'))
         table_rows = sorted(
-            table_rows, key=itemgetter('points'), reverse=True
+            table_rows, key=itemgetter('event_count'), reverse=True
         )
         table_rows = sorted(
-            table_rows, key=itemgetter('event_count'), reverse=True
+            table_rows, key=itemgetter('points'), reverse=True
         )
         return table_rows
 

@@ -1,6 +1,6 @@
 import requests
 
-API_URL = 'https://api.liveleague.events'
+API_URL = 'https://api.livemusicleague.com'
 TOKEN = '622d73f9f2d56c4797917fd8086f5a3d51117d0c'
 
 
