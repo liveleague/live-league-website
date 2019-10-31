@@ -13,6 +13,13 @@
           <h1><b>Account</b></h1>
           <p><h6>Name: </h6>{{ account.name }}</p>
           <p><h6>Email: </h6>{{ account.email }}</p>
+          {% if account.is_promoter %}
+            {% if account.is_verified %}
+              <p><h6>Verified: </h6><i class="fas fa-check-circle"></i></p>
+            {% else %}
+              <p><h6>Verified: </h6><i class="fas fa-times-circle"></i></p>
+            {% endif %}
+          {% endif %}
           <p><h6>Credit: </h6>£{{ account.credit }}</p>
           <p>&nbsp;</p>
             <button type="button" class="btn btn-success btn-sm" disabled>Edit</button>
@@ -84,7 +91,7 @@
                 {% for row in upcoming_tickets %}
                     <tr>
                         <td><a class="ticket-code" href="{{ url_for('ticket', code=row['code']) }}">{{ row['code'] }}</td>
-                        <td>{{ row['event_start_date'] }}</td>
+                        <td>{{ row['event_start_date']|date('small') }}</td>
                         <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
                         <td>{{ row['ticket_type'] }}</td>
                         {% if row['vote_artist'] %}
@@ -147,7 +154,7 @@
               {% for row in past_tickets %}
                   <tr>
                       <td><a href="{{ url_for('ticket', code=row['code']) }}">{{ row['code'] }}</td>
-                      <td>{{ row['event_start_date'] }}</td>
+                      <td>{{ row['event_start_date']|date('small') }}</td>
                       <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
                       <td>{{ row['ticket_type'] }}</td>
                       {% if row['vote_artist'] %}
@@ -188,9 +195,13 @@
               <tbody>
               {% for row in upcoming_events %}
                   <tr>
-                      <td>{{ row['event_start_date'] }}</td>
+                      <td>{{ row['event_start_date']|date('small') }}</td>
                       <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
-                      <td>{{ row['points'] }}</td>
+                      {% if row['points'] %}
+                        <td>{{ row['points'] }}</td>
+                      {% else %}
+                        <td>0</td>
+                      {% endif %}
                   </tr>
               {% endfor %}
               </tbody>
@@ -213,9 +224,13 @@
               <tbody>
               {% for row in past_events %}
                   <tr>
-                      <td>{{ row['event_start_date'] }}</td>
+                      <td>{{ row['event_start_date']|date('small') }}</td>
                       <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
-                      <td>{{ row['points'] }}</td>
+                      {% if row['points'] %}
+                        <td>{{ row['points'] }}</td>
+                      {% else %}
+                        <td>0</td>
+                      {% endif %}
                   </tr>
               {% endfor %}
               </tbody>
@@ -225,15 +240,22 @@
       </div>
       <div class="col-sm">
         <span>
-          <h2>Win <b>£100</b> in our social media contest:</h2>
-          <ol>
-            <h4>
-              <li>Add <span style="color: #CA52E4;">@livemusicleague</span> on <a href="{{ url_for('social', platform='instagram') }}"><u>Instagram</u></a> or <a href="{{ url_for('social', platform='twitter') }}"><u>Twitter</u></a></li><br>
-              <li>Mention <span style="color: #CA52E4;">@livemusicleague</span> in a post</li><br>
-              <li>Post of the month wins £100!</li>
-            </h4>
-          </ol>
-          <p>&nbsp;</p>
+          {% if not account.is_artist and not account.is_promoter %}
+            <h2>Win <b>prizes</b> in our social media contest:</h2>
+            <ol>
+              <h4>
+                <li>Follow <span style="color: #CA52E4;">@livemusicleague</span> on <a href="https://www.instagram.com/livemusicleague"><u>Instagram</u></a> or <a href="https://www.twitter.com/livemusicleague"><u>Twitter</u></a></li><br>
+                <li>Check your notifications to see if you've won:
+                  <ul>
+                    <li>Cash <i class="far fa-money-bill-alt"></i></li>
+                    <li>Tickets <i class="fas fa-ticket-alt"></i></li>
+                    <li>Drinks <i class="fas fa-beer"></i></li>
+                  </ul><br>
+                <li>Good luck <i class="far fa-smile"></i></li>
+              </h4>
+            </ol>
+            <p>&nbsp;</p>
+          {% endif %}
           {% if account.image %}
             <img src="{{ account.image }}" height="200" width="200">
           {% endif %}

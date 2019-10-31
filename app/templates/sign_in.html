@@ -12,9 +12,10 @@
           <!-- Main -->
           <h1 id="main-header"><b>Sign In</b></h1>
 
-          <form action="" method="post" novalidate>
+          <form action="" method="post" enctype="multipart/form-data" novalidate>
             {{ login_form.hidden_tag() }}
-            {{ register_form.hidden_tag() }}
+            {{ register_artist_promoter_form.hidden_tag() }}
+            {{ register_user_form.hidden_tag() }}
 
             <!-- Register checkbox -->
             <div id="registration-btn" class="form-check">
@@ -28,50 +29,212 @@
             <p>&nbsp;</p>
             </div>
 
-            <!-- First name (register only) -->
-            <div id="first-name-div" class="form-group"  style="display: none;">
-              {{ register_form.first_name.label(for="firstNameInput") }}
-              {{ register_form.first_name(type="text", class="form-control", id="firstNameInput", placeholder="Enter first name") }}
-              {% for error in register_form.first_name.errors %}
+            <!-- User type checkboxes -->
+            <div id="radio-btn-div" style="display: none;">
+              {% for subfield in register_artist_promoter_form.group %}
+                {% set group = groups[loop.index - 1] %}
+                <div class="form-check form-check-radio">
+                  <label class="form-check-label">
+                    {% if group == "I just like to party" %}
+                      {{ subfield(class="form-check-input", checked=True) }}
+                    {% else %}
+                      {{ subfield(class="form-check-input") }}
+                    {% endif %}
+                    {{ group }}
+                    <span class="form-check-sign"></span>
+                  </label>
+                </div>
+              {% endfor %}
+              <p>&nbsp;</p>
+            </div>
+
+            {% if errors %}
+              {% for error in errors %}
+                <span style="color: white;">[{{ error[0] }}]</span>
+              {% endfor %}
+              <p>&nbsp;</p>
+            {% endif %}
+
+            <!-- First name (register-user only) -->
+            <div id="first-name-div" class="form-group" style="display: none;">
+              {{ register_user_form.first_name.label(for="firstNameInput") }}
+              {{ register_user_form.first_name(type="text", class="form-control", id="firstNameInput", placeholder="Enter first name") }}
+              {% for error in register_user_form.first_name.errors %}
                 <span style="color: white;">[{{ error }}]</span>
               {% endfor %}
             </div>
 
-            <!-- Last name (register only) -->
-            <div id="last-name-div" class="form-group"  style="display: none;">
-              {{ register_form.last_name.label(for="lastNameInput") }}
-              {{ register_form.last_name(type="text", class="form-control", id="lastNameInput", placeholder="Enter last name") }}
-              {% for error in register_form.last_name.errors %}
+            <!-- Last name (register-user only) -->
+            <div id="last-name-div" class="form-group" style="display: none;">
+              {{ register_user_form.last_name.label(for="lastNameInput") }}
+              {{ register_user_form.last_name(type="text", class="form-control", id="lastNameInput", placeholder="Enter last name") }}
+              {% for error in register_user_form.last_name.errors %}
                 <span style="color: white;">[{{ error }}]</span>
               {% endfor %}
             </div>
 
-            <!-- Email -->
-            <div class="form-group">
+            <!-- Name (register-artist-promoter only) -->
+            <div id="name-div" class="form-group" style="display: none;">
+              {{ register_artist_promoter_form.name.label(for="NameInput") }}
+              {{ register_artist_promoter_form.name(type="text", class="form-control", id="NameInput", placeholder="Enter name") }}
+              {% for error in register_artist_promoter_form.name.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Email (login) -->
+            <div id="login-email-input" class="form-group">
               {{ login_form.email.label(for="exampleInputEmail1") }}
-
-              {{ login_form.email(id="login-email-input", type="email", class="form-control", placeholder="Enter email", **{'aria-describedby':"emailHelp"}) }}
-              {{ register_form.email(id="register-email-input", style="display: none;", type="email", class="form-control", placeholder="Enter email", **{'aria-describedby':"emailHelp"}) }}
-
+              {{ login_form.email(type="email", class="form-control", placeholder="Enter email", **{'aria-describedby':"emailHelp"}) }}
               {% for error in login_form.email.errors %}
+                <span id="login-email-errors" style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Email (register-user) -->
+            <div id="register-user-email-input" class="form-group" style="display: none;">
+              {{ register_user_form.email.label(for="exampleInputEmail1") }}
+              {{ register_user_form.email(type="email", class="form-control", placeholder="Enter email", **{'aria-describedby':"emailHelp"}) }}
+              {% for error in register_user_form.email.errors %}
+                <span id="register-user-email-errors" style="color: white;" style="display: none;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Email (register-artist-promoter) -->
+            <div id="register-artist-promoter-email-input" class="form-group" style="display: none;">
+              {{ register_artist_promoter_form.email.label(for="exampleInputEmail1") }}
+              {{ register_artist_promoter_form.email(type="email", class="form-control", placeholder="Enter email", **{'aria-describedby':"emailHelp"}) }}
+              {% for error in register_artist_promoter_form.email.errors %}
+                <span id="register-artist-promoter-email-errors" style="color: white;" style="display: none;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Country Code & Phone (register-artist-promoter) -->
+            <div class="form-row">
+              <div id="register-artist-promoter-country-code" class="form-group col-md-4" style="display: none;">
+                {{ register_artist_promoter_form.country_code.label(for="exampleInputCountryCode1") }}
+                {{ register_artist_promoter_form.country_code(id="country-code-select", type="text", class="form-control", placeholder="Enter country code", **{'aria-describedby':"CountryCodeHelp"}) }}
+                {% for error in register_artist_promoter_form.country_code.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+              <div id="register-artist-promoter-phone-input" class="form-group col-md-6" style="display: none;">
+                {{ register_artist_promoter_form.phone.label(for="exampleInputPhone1") }}
+                {{ register_artist_promoter_form.phone(type="text", class="form-control", placeholder="Enter phone", **{'aria-describedby':"phoneHelp"}) }}
+                {% for error in register_artist_promoter_form.phone.errors %}
+                  <span id="register-artist-promoter-phone-errors" style="color: white;" style="display: none;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Password (login) -->
+            <div id="login-password-input" class="form-group">
+              {{ login_form.password.label(for="exampleInputPassword1") }}
+              {{ login_form.password(type="password", class="form-control", placeholder="Enter password") }}
+              {% for error in login_form.password.errors %}
+                <span id="login-password-errors" style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Password (register-user) -->
+            <div id="register-user-password-input" class="form-group" style="display: none;">
+              {{ register_user_form.password.label(for="exampleInputPassword1") }}
+              {{ register_user_form.password(type="password", class="form-control", placeholder="Enter password") }}
+              {% for error in register_user_form.password.errors %}
+                <span id="register-user-password-errors" style="color: white;" style="display: none;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Password (register-artist-promoter) -->
+            <div id="register-artist-promoter-password-input" class="form-group" style="display: none;">
+              {{ register_artist_promoter_form.password.label(for="exampleInputPassword1") }}
+              {{ register_artist_promoter_form.password(type="password", class="form-control", placeholder="Enter password") }}
+              {% for error in register_artist_promoter_form.password.errors %}
+                <span id="register-artist-promoter-password-errors" style="color: white;" style="display: none;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Description (register-artist-promoter only) -->
+            <div id="description-div" class="form-group" style="display: none;">
+              <p>&nbsp;</p>
+              {{ register_artist_promoter_form.description.label(for="DescriptionInput") }}
+              {{ register_artist_promoter_form.description(type="text", class="form-control", id="DescriptionInput", placeholder="Enter description") }}
+              {% for error in register_artist_promoter_form.description.errors %}
                 <span style="color: white;">[{{ error }}]</span>
               {% endfor %}
-              {% for error in register_form.email.errors %}
+              <p>&nbsp;</p>
+            </div>
+
+            <!-- Facebook (register-artist-promoter only) -->
+            <div id="facebook-div" class="form-group" style="display: none;">
+              {{ register_artist_promoter_form.facebook.label(for="FacebookInput") }}
+              {{ register_artist_promoter_form.facebook(type="text", class="form-control", id="FacebookInput", placeholder="Enter facebook link") }}
+              {% for error in register_artist_promoter_form.facebook.errors %}
                 <span style="color: white;">[{{ error }}]</span>
               {% endfor %}
             </div>
 
-            <!-- Password -->
-            <div class="form-group">
-              {{ login_form.password.label(for="exampleInputPassword1") }}
-
-              {{ login_form.password(id="login-password-input", type="password", class="form-control", placeholder="Enter password") }}
-              {{ register_form.password(id="register-password-input", style="display: none;", type="password", class="form-control", placeholder="Enter password") }}
-
-              {% for error in login_form.password.errors %}
+            <!-- Instagram (register-artist-promoter only) -->
+            <div id="instagram-div" class="form-group" style="display: none;">
+              {{ register_artist_promoter_form.instagram.label(for="InstagramInput") }}
+              {{ register_artist_promoter_form.instagram(type="text", class="form-control", id="InstagramInput", placeholder="Enter instagram link") }}
+              {% for error in register_artist_promoter_form.instagram.errors %}
                 <span style="color: white;">[{{ error }}]</span>
               {% endfor %}
-              {% for error in register_form.password.errors %}
+            </div>
+
+            <!-- Soundcloud (register-artist-promoter only) -->
+            <div id="soundcloud-div" class="form-group" style="display: none;">
+              {{ register_artist_promoter_form.soundcloud.label(for="SoundcloudInput") }}
+              {{ register_artist_promoter_form.soundcloud(type="text", class="form-control", id="SoundcloudInput", placeholder="Enter soundcloud link") }}
+              {% for error in register_artist_promoter_form.soundcloud.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+  
+            <!-- Spotify (register-artist-promoter only) -->
+            <div id="spotify-div" class="form-group" style="display: none;">
+              {{ register_artist_promoter_form.spotify.label(for="SpotifyInput") }}
+              {{ register_artist_promoter_form.spotify(type="text", class="form-control", id="SpotifyInput", placeholder="Enter spotify link") }}
+              {% for error in register_artist_promoter_form.spotify.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+    
+            <!-- Twitter (register-artist-promoter only) -->
+            <div id="twitter-div" class="form-group" style="display: none;">
+              {{ register_artist_promoter_form.twitter.label(for="TwitterInput") }}
+              {{ register_artist_promoter_form.twitter(type="text", class="form-control", id="TwitterInput", placeholder="Enter twitter link") }}
+              {% for error in register_artist_promoter_form.twitter.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+  
+            <!-- Website (register-artist-promoter only) -->
+            <div id="website-div" class="form-group" style="display: none;">
+              {{ register_artist_promoter_form.website.label(for="WebsiteInput") }}
+              {{ register_artist_promoter_form.website(type="text", class="form-control", id="WebsiteInput", placeholder="Enter website link") }}
+              {% for error in register_artist_promoter_form.website.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+    
+            <!-- Youtube (register-artist-promoter only) -->
+            <div id="youtube-div" class="form-group" style="display: none;">
+              {{ register_artist_promoter_form.youtube.label(for="YoutubeInput") }}
+              {{ register_artist_promoter_form.youtube(type="text", class="form-control", id="YoutubeInput", placeholder="Enter youtube link") }}
+              {% for error in register_artist_promoter_form.youtube.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <p>&nbsp;</p>
+
+            <!-- Image (register-artist-promoter only) -->
+            <div id="image-div" style="display: none;">
+              {{ register_artist_promoter_form.image.label(for="ImageInput") }}<br>
+              {{ register_artist_promoter_form.image(type="file", class="form-control-file", id="ImageInput", placeholder="Upload profile picture") }}
+              {% for error in register_artist_promoter_form.image.errors %}
                 <span style="color: white;">[{{ error }}]</span>
               {% endfor %}
             </div>
@@ -80,7 +243,8 @@
 
             <!-- Submit button -->
             {{ login_form.submit(id="login-submit-btn", type="submit", class="btn btn-primary") }}
-            {{ register_form.submit(id="register-submit-btn", style="display: none;", type="submit", class="btn btn-primary") }}
+            {{ register_user_form.submit(id="register-user-submit-btn", style="display: none;", type="submit", class="btn btn-primary") }}
+            {{ register_artist_promoter_form.submit(id="register-artist-promoter-submit-btn", style="display: none;", type="submit", class="btn btn-primary") }}
           </form>
 
           <p>&nbsp;</p>
@@ -88,31 +252,167 @@
 
           <script>
             $(document).ready(function() {
+
+              function login() {
+                $("#main-header").html("<h1><b>Sign In</b></h1>");
+                // SHOW
+                $("#login-email-input").show();
+                $("#login-email-errors").show();
+                $("#login-password-input").show();
+                $("#login-password-errors").show();
+                $("#login-submit-btn").show();
+                // HIDE
+                $("#radio-btn-div").hide();
+                $("#first-name-div").hide();
+                $("#last-name-div").hide();
+                $("#register-user-email-input").hide();
+                $("#register-user-email-errors").hide();
+                $("#register-user-password-input").hide();
+                $("#register-user-password-errors").hide();
+                $("#register-user-submit-btn").hide();
+                $("#name-div").hide();
+                $("#register-artist-promoter-email-input").hide();
+                $("#register-artist-promoter-email-errors").hide();
+                $("#register-artist-promoter-password-input").hide();
+                $("#register-artist-promoter-password-errors").hide();
+                $("#register-artist-promoter-phone-input").hide();
+                $("#register-artist-promoter-phone-errors").hide();
+                $("#register-artist-promoter-country-code").hide();
+                $("#description-div").hide();
+                $("#facebook-div").hide();
+                $("#instagram-div").hide();
+                $("#soundcloud-div").hide();
+                $("#spotify-div").hide();
+                $("#twitter-div").hide();
+                $("#website-div").hide();
+                $("#youtube-div").hide();
+                $("#image-div").hide();
+                $("#register-artist-promoter-submit-btn").hide();
+              }
+
+              function artistPromoter() {
+                $("#main-header").html("<h1><b>Register</b></h1>");
+                // SHOW
+                $("#radio-btn-div").show();
+                $("#name-div").show();
+                $("#register-artist-promoter-email-input").show();
+                $("#register-artist-promoter-email-errors").show();
+                $("#register-artist-promoter-password-input").show();
+                $("#register-artist-promoter-password-errors").show();
+                $("#register-artist-promoter-phone-input").show();
+                $("#register-artist-promoter-phone-errors").show();
+                $("#register-artist-promoter-country-code").show();
+                $("#description-div").show();
+                $("#facebook-div").show();
+                $("#instagram-div").show();
+                $("#soundcloud-div").show();
+                $("#spotify-div").show();
+                $("#twitter-div").show();
+                $("#website-div").show();
+                $("#youtube-div").show();
+                $("#image-div").show();
+                $("#register-artist-promoter-submit-btn").show();
+                // HIDE
+                $("#login-email-input").hide();
+                $("#login-email-errors").hide();
+                $("#login-password-input").hide();
+                $("#login-password-errors").hide();
+                $("#login-submit-btn").hide();
+                $("#first-name-div").hide();
+                $("#last-name-div").hide();
+                $("#register-user-email-input").hide();
+                $("#register-user-email-errors").hide();
+                $("#register-user-password-input").hide();
+                $("#register-user-password-errors").hide();
+                $("#register-user-submit-btn").hide();
+              }
+
+              function user() {
+                $("#main-header").html("<h1><b>Register</b></h1>");
+                // SHOW
+                $("#radio-btn-div").show();
+                $("#first-name-div").show();
+                $("#last-name-div").show();
+                $("#register-user-email-input").show();
+                $("#register-user-email-errors").show();
+                $("#register-user-password-input").show();
+                $("#register-user-password-errors").show();
+                $("#register-user-submit-btn").show();
+                // HIDE
+                $("#login-email-input").hide();
+                $("#login-email-errors").hide();
+                $("#login-password-input").hide();
+                $("#login-password-errors").hide();
+                $("#login-submit-btn").hide();
+                $("#name-div").hide();
+                $("#register-artist-promoter-email-input").hide();
+                $("#register-artist-promoter-email-errors").hide();
+                $("#register-artist-promoter-password-input").hide();
+                $("#register-artist-promoter-password-errors").hide();
+                $("#register-artist-promoter-phone-input").hide();
+                $("#register-artist-promoter-phone-errors").hide();
+                $("#register-artist-promoter-country-code").hide();
+                $("#description-div").hide();
+                $("#facebook-div").hide();
+                $("#instagram-div").hide();
+                $("#soundcloud-div").hide();
+                $("#spotify-div").hide();
+                $("#twitter-div").hide();
+                $("#website-div").hide();
+                $("#youtube-div").hide();
+                $("#image-div").hide();
+                $("#register-artist-promoter-submit-btn").hide();
+              }
+
               $('#registration-btn').click(function() {
                 if ($('#registration-check').prop('checked')) {
-                  $("#main-header").html("<h1><b>Register</b></h1>");
-                  $("#first-name-div").show();
-                  $("#last-name-div").show();
-                  $("#register-email-input").show();
-                  $("#login-email-input").hide();
-                  $("#register-password-input").show();
-                  $("#login-password-input").hide();
-                  $("#confirm-password-div").show();
-                  $("#register-submit-btn").show();
-                  $("#login-submit-btn").hide();
+                  if ($('#register_artist_promoter_form-group-0').prop('checked') || $('#register_artist_promoter_form-group-1').prop('checked')) {
+                    artistPromoter();
+                  } else {
+                    user();
+                  }
                 } else {
-                  $("#main-header").html("<h1><b>Sign In</b></h1>");
-                  $("#first-name-div").hide();
-                  $("#last-name-div").hide();
-                  $("#register-email-input").hide();
-                  $("#login-email-input").show();
-                  $("#register-password-input").hide();
-                  $("#login-password-input").show();
-                  $("#confirm-password-div").hide();
-                  $("#register-submit-btn").hide();
-                  $("#login-submit-btn").show();
+                  login();
                 }
               });
+
+              // ARTIST
+              $('#register_artist_promoter_form-group-0').click(function() {
+                artistPromoter();
+              });
+
+              // PROMOTER
+              $('#register_artist_promoter_form-group-1').click(function() {
+                artistPromoter();
+              });
+
+              // NEITHER
+              $('#register_artist_promoter_form-group-2').click(function() {
+                user();
+              });
+
+              // Country code dropdown
+              $('option').css('color', 'black');
+              $('#country-code-select').val('GB');
+
+              // Error handling
+              if ("{{ page }}" == "register_artist") {
+                $("#registration-check").prop("checked", true);
+                $("#register_artist_promoter_form-group-0").prop("checked", true);
+                artistPromoter();
+              } else if ("{{ page }}" == "register_promoter") {
+                $("#registration-check").prop("checked", true);
+                $("#register_artist_promoter_form-group-1").prop("checked", true);
+                artistPromoter();
+              } else if ("{{ page }}" == "register_user") {
+                $("#registration-check").prop("checked", true);
+                $("#register_artist_promoter_form-group-2").prop("checked", true);
+                user();
+              } else {
+                $("#registration-check").prop("checked", false);
+                login();
+              }
+
             });
           </script>
 

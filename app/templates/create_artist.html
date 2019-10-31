@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}Create Artist{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <span>
+              <nav aria-label="breadcrumb" role="navigation">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('create', category='artist') }}">Create Artist</a></li>
+                  </ol>
+                </nav>
+          </span>
+        </div>
+    </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <span>
+          <!-- Main -->
+          <h1><b>Create Artist</b></h1>
+            <form action="" method="post" enctype="multipart/form-data" novalidate>
+              {{ form.hidden_tag() }}
+
+              {% if messages %}
+                {% for message in messages %}
+                  <span style="color: white;">[{{ message }}]</span><br>
+                {% endfor %}
+                <p>&nbsp;</p>
+              {% endif %}
+
+              <!-- Name (register-artist-promoter only) -->
+              <div id="name-div" class="form-group">
+                {{ form.name.label(for="NameInput") }}
+                {{ form.name(type="text", class="form-control", id="NameInput", placeholder="Enter name") }}
+                {% for error in form.name.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Email (register-artist-promoter) -->
+              <div id="register-artist-promoter-email-input" class="form-group">
+                {{ form.email.label(for="exampleInputEmail1") }}
+                {{ form.email(type="email", class="form-control", placeholder="Enter email", **{'aria-describedby':"emailHelp"}) }}
+                {% for error in form.email.errors %}
+                  <span id="register-artist-promoter-email-errors" style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Country Code & Phone (register-artist-promoter) -->
+              <div class="form-row">
+                <div id="register-artist-promoter-country-code" class="form-group col-md-4">
+                  <label>Phone Country</label>
+                  {{ form.country_code(id="country-code-select", type="text", class="form-control", placeholder="Enter country code", **{'aria-describedby':"CountryCodeHelp"}) }}
+                  {% for error in form.country_code.errors %}
+                    <span style="color: white;">[{{ error }}]</span>
+                  {% endfor %}
+                </div>
+                <div id="register-artist-promoter-phone-input" class="form-group col-md-6">
+                  <label>Phone Number</label>
+                  {{ form.phone(type="text", class="form-control", placeholder="Enter phone", **{'aria-describedby':"phoneHelp"}) }}
+                  {% for error in form.phone.errors %}
+                    <span id="register-artist-promoter-phone-errors" style="color: white;">[{{ error }}]</span>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Description (register-artist-promoter only) -->
+              <div id="description-div" class="form-group">
+                <p>&nbsp;</p>
+                {{ form.description.label(for="DescriptionInput") }}
+                {{ form.description(type="text", class="form-control", id="DescriptionInput", placeholder="Enter description") }}
+                {% for error in form.description.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+                <p>&nbsp;</p>
+              </div>
+
+              <!-- Facebook (register-artist-promoter only) -->
+              <div id="facebook-div" class="form-group">
+                {{ form.facebook.label(for="FacebookInput") }}
+                {{ form.facebook(type="text", class="form-control", id="FacebookInput", placeholder="Enter facebook link") }}
+                {% for error in form.facebook.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Instagram (register-artist-promoter only) -->
+              <div id="instagram-div" class="form-group">
+                {{ form.instagram.label(for="InstagramInput") }}
+                {{ form.instagram(type="text", class="form-control", id="InstagramInput", placeholder="Enter instagram link") }}
+                {% for error in form.instagram.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Soundcloud (register-artist-promoter only) -->
+              <div id="soundcloud-div" class="form-group">
+                {{ form.soundcloud.label(for="SoundcloudInput") }}
+                {{ form.soundcloud(type="text", class="form-control", id="SoundcloudInput", placeholder="Enter soundcloud link") }}
+                {% for error in form.soundcloud.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+    
+              <!-- Spotify (register-artist-promoter only) -->
+              <div id="spotify-div" class="form-group">
+                {{ form.spotify.label(for="SpotifyInput") }}
+                {{ form.spotify(type="text", class="form-control", id="SpotifyInput", placeholder="Enter spotify link") }}
+                {% for error in form.spotify.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+      
+              <!-- Twitter (register-artist-promoter only) -->
+              <div id="twitter-div" class="form-group">
+                {{ form.twitter.label(for="TwitterInput") }}
+                {{ form.twitter(type="text", class="form-control", id="TwitterInput", placeholder="Enter twitter link") }}
+                {% for error in form.twitter.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+    
+              <!-- Website (register-artist-promoter only) -->
+              <div id="website-div" class="form-group">
+                {{ form.website.label(for="WebsiteInput") }}
+                {{ form.website(type="text", class="form-control", id="WebsiteInput", placeholder="Enter website link") }}
+                {% for error in form.website.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Youtube (register-artist-promoter only) -->
+              <div id="youtube-div" class="form-group">
+                {{ form.youtube.label(for="YoutubeInput") }}
+                {{ form.youtube(type="text", class="form-control", id="YoutubeInput", placeholder="Enter youtube link") }}
+                {% for error in form.youtube.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <p>&nbsp;</p>
+
+              <!-- Image (register-artist-promoter only) -->
+              <div id="image-div">
+                {{ form.image.label(for="ImageInput") }}<br>
+                {{ form.image(type="file", class="form-control-file", id="ImageInput", placeholder="Upload profile picture") }}
+                {% for error in form.image.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <p>&nbsp;</p>
+
+              <!-- Submit button -->
+              {{ form.submit(id="register-submit-btn", type="submit", class="btn btn-primary") }}
+            </form>
+
+            <script>
+              $(document).ready(function() {
+                $('option').css('color', 'black');
+                $('#country-code-select').val('GB');
+              });
+            </script>
+
+        </span>
+      </div>
+      <div class="col-sm">
+        <span>
+        </span>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <span>
+            <nav aria-label="breadcrumb" role="navigation">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                </ol>
+              </nav>
+        </span>
+      </div>
+  </div>
+  <div class="container">
+      <div class="row">
+        <div class="col-sm-3">
+          <span>
+            <!-- Main -->
+              <h1><b>Dashboard</b></h1>
+              <p><h6>{{ account.name }}</h6></p><br>
+              <p><b>New:</b></p>
+              <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='artist') }}"> Artist</a><br>
+              <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='venue') }}"> Venue</a><br>
+              <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='event') }}"> Event</a><br>
+              <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='ticket') }}"> Ticket</a><br>
+              <p>&nbsp;</p>
+              <p><b>View:</b></p>
+              <button type="button" class="btn btn-default" style="width: 150px;" disabled>Artists</button><br>
+              <button type="button" class="btn btn-default" style="width: 150px;">Events</button><br>
+              <button type="button" class="btn btn-default" style="width: 150px;" disabled>Ticket Types</button><br>
+              <button type="button" class="btn btn-default" style="width: 150px;" disabled>Tickets</button><br>
+          </span>
+        </div>
+        <div class="col-sm-9">
+          <span>
+              {% if events %}
+              <!-- Table (Events) -->
+              <p>&nbsp;</p>
+              <table class="table">
+                <thead>
+                  <tr>
+                      <td class="text-center" colspan="5"><b>EVENTS</b></td>
+                  </tr>
+                  <tr>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Edit</th>
+                    <th>Tickets sold</th>
+                    <th>New tickets</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for row in events %}
+                  <tr>
+                      <td>{{ row['start_date']|date('small') }}</td>
+                      <td><a href="{{ url_for('event', id=row['id']) }}" target="_blank">{{ row['name'] }}</a></td>
+                      <td><a href="{{ url_for('edit', category='event', event_id=row['id']) }}"><i class="far fa-edit"></i></a></td>
+                      <td>{{ row['tickets_sold'] }}</td>
+                      <td><a href="{{ url_for('create', category='ticket', event_id=row['id']) }}"><i class="fas fa-plus-square"></i></a></td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            {% endif %}
+
+            {% if tallies %}
+              <!-- Table (Artists) -->
+              <p>&nbsp;</p>
+              <table class="table">
+                <thead>
+                  <tr>
+                      <td class="text-center" colspan="5"><b>ARTISTS</b></td>
+                  </tr>
+                  <tr>
+                    <th>Name</th>
+                    <th>Event</th>
+                    <th>Votes</th>
+                    <th>Points</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for row in tallies %}
+                  <tr>
+                      <td><a href="{{ url_for('artist', slug=row['artist_slug']) }}" target="_blank">{{ row['artist'] }}</a></td>
+                      <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
+                      <td>{{ row['votes'] }}</td>
+                      {% if row['points'] %}
+                        <td>{{ row['points'] }}</td>
+                      {% else %}
+                        <td>0</td>
+                      {% endif %}
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            {% endif %}
+
+            <script>
+              $(document).ready(function() {
+
+              });
+            </script>
+
+          </span>
+        </div>
+  
+      </div>
+    </div>
+{% endblock %}

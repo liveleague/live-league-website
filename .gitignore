@@ -130,3 +130,6 @@ Vagrantfile
 
 # Hosting
 app.sock
+
+# Keys
+app/keys.py

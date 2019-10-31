@@ -9,7 +9,7 @@ def format_date(value, format):
         if format == 'full':
             return datetime.strptime(value, old_format).strftime('%d %B %Y')
         if format == 'small':
-            return datetime.strptime(value, old_format).strftime('%b-%d')
+            return datetime.strptime(value, old_format).strftime('%b %d')
 
 def format_time(value, format):
     """Format a time."""

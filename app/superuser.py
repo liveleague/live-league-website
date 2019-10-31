@@ -1,6 +1,6 @@
 import requests
 
-API_URL = 'https://api.livemusicleague.com'
+API_URL = 'https://api.liveleague.co.uk/v1/'
 TOKEN = '622d73f9f2d56c4797917fd8086f5a3d51117d0c'
 
 
@@ -23,10 +23,7 @@ class Superuser(object):
             r = requests.patch(
                 API_URL + endpoint, headers=headers, json=json
             )
-        if str(r.status_code).startswith('2'):
-            return r.json()
-        else:
-            return r.status_code
+        return {'status': r.status_code, 'json': r.json()}
 
     def create_secret(self, email):
         """Email a secret code and return a hash. For password resets."""

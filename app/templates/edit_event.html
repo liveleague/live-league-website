@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% block title %}Create Event{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <span>
+              <nav aria-label="breadcrumb" role="navigation">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('edit', category='event') }}">Edit Event</a></li>
+                  </ol>
+                </nav>
+          </span>
+        </div>
+    </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <span>
+          <!-- Main -->
+          <h1><b>Edit Event</b></h1>
+
+          <form action="" method="post" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+
+            {% if messages %}
+              {% for message in messages %}
+                <span style="color: white;">[{{ message }}]</span><br>
+              {% endfor %}
+              <p>&nbsp;</p>
+            {% endif %}
+
+            <!-- Event -->
+            <div class="form-group">
+              <label for="eventSelect">Event *</label>
+              <select class="form-control" id="eventSelect" name="event-select" required>
+                {% for event in events %}
+                  <option class="event-option"
+                          data-id="{{ event.id }}"
+                          data-name="{{ event.name }}"
+                          data-description="{{ event.description }}"
+                          data-venue="{{ event.venue_slug }}"
+                          data-start-date="{{ event.start_date }}"
+                          data-start-time="{{ event.start_time }}"
+                          data-end-date="{{ event.end_date }}"
+                          data-end-time="{{ event.end_time }}"
+                          {% for tally in event.lineup %}
+                            data-artist-{{ loop.index }}="{{ tally.artist_slug }}"
+                          {% endfor %}
+                          data-image="{{ event.image }}">
+                          {{ event.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Name -->
+            <div id="name-div" class="form-group">
+              {{ form.name.label(for="NameInput") }}
+              {{ form.name(type="text", class="form-control", id="NameInput", placeholder="Enter name") }}
+              {% for error in form.name.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Description -->
+            <div id="description-div" class="form-group">
+              <p>&nbsp;</p>
+              {{ form.description.label(for="DescriptionInput") }}
+              {{ form.description(type="text", class="form-control", id="DescriptionInput", placeholder="Enter description") }}
+              {% for error in form.description.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+              <p>&nbsp;</p>
+            </div>
+
+            <!-- Venue -->
+            <div class="form-group">
+              <label for="venueSelect">Venue *</label>
+              <select class="form-control child-select" id="venueSelect" name="venue-select" required>
+                <option class="type-option" value="None">Select a venue...</option>
+                {% for venue in venues %}
+                  <option class="venue-option" value="{{ venue.slug }}">{{ venue.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Start Date -->
+            <div id="name-div" class="form-group">
+              {{ form.start_date.label(for="StartDateInput") }}
+              {{ form.start_date(type="date", class="form-control", id="StartDateInput", placeholder="Enter start date") }}
+              {% for error in form.start_date.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Start Time -->
+            <div id="name-div" class="form-group">
+              {{ form.start_time.label(for="StartTimeInput") }}
+              {{ form.start_time(type="time", class="form-control", id="StartTimeInput", placeholder="Enter start time") }}
+              {% for error in form.start_time.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- End Date -->
+            <div id="name-div" class="form-group">
+              {{ form.end_date.label(for="EndDateInput") }}
+              {{ form.end_date(type="date", class="form-control", id="EndDateInput", placeholder="Enter end date") }}
+              {% for error in form.end_date.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- End Time -->
+            <div id="name-div" class="form-group">
+              {{ form.end_time.label(for="EndTimeInput") }}
+              {{ form.end_time(type="time", class="form-control", id="EndTimeInput", placeholder="Enter end time") }}
+              {% for error in form.end_time.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <p>&nbsp;</p>
+
+            <p>To select multiple artists, hold down:</p>
+            <ul>
+              <li>'Ctrl' on Windows</li>
+              <li>'Command' on Mac</li>
+            </ul>
+
+            <!-- Lineup -->
+            <div class="form-group">
+              <label for="artistSelect">Lineup</label>
+              <select multiple class="form-control child-select" id="artistSelect" size="10">
+                {% for artist in artists %}
+                  <option class="artist-option" value="{{ artist.slug }}">{{ artist.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <p>&nbsp;</p>
+
+            <!-- Image (register-artist-promoter only) -->
+            <div id="image-div">
+              {{ form.image.label(for="ImageInput") }}<br>
+              <img src="#" id="profile-picture" class="img-rounded">
+              <p>&nbsp;</p>
+              {{ form.image(type="file", class="form-control-file", id="ImageInput", placeholder="Upload profile picture") }}
+              {% for error in form.image.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <p>&nbsp;</p>
+
+            <!-- Submit button -->
+            {{ form.submit(id="register-submit-btn", type="submit", class="btn btn-primary") }}
+          </form>
+
+          <script>
+            $(document).ready(function() {
+
+              // Add text colour to dropdown options
+              $('.event-option').css('color', 'black');
+              $('.venue-option').css('color', 'black');
+              // Set venue to 'none'
+              $('#venueSelect').val('None');
+
+              function changeSelections() {
+                var id = $("#eventSelect option:selected").data("id");
+                var name = $("#eventSelect option:selected").data("name");
+                var description = $("#eventSelect option:selected").data("description");
+                var venue = $("#eventSelect option:selected").data("venue");
+                var startDate = $("#eventSelect option:selected").data("start-date");
+                var startTime = $("#eventSelect option:selected").data("start-time");
+                var endDate = $("#eventSelect option:selected").data("end-date");
+                var endTime = $("#eventSelect option:selected").data("end-time");
+                var image = $("#eventSelect option:selected").data("image");
+
+                var i = 1;
+                var exists = true;
+                var artists = [];
+                while (exists) {
+                  var artist = $("#eventSelect option:selected").data("artist" + "-" + i);
+                  if (typeof artist === "undefined") {
+                    exists = false;
+                  } else {
+                    artists.push(artist);
+                  }
+                  i++;
+                }
+
+                $(".artist-option").prop("selected", false);
+
+                $("#artistSelect > option").each(function() {
+                  if (artists.includes(this.value)) {
+                    $(this).prop("selected", true);
+                  }
+                });
+
+                $("#NameInput").val(name);
+                $("#DescriptionInput").val(description);
+                $(".venue-option[value="+ venue + "]").prop("selected", true);
+                $("#StartDateInput").val(startDate);
+                $("#StartTimeInput").val(startTime);
+                $("#EndDateInput").val(endDate);
+                $("#EndTimeInput").val(endTime);
+                $("#profile-picture").attr("src", image);
+              }
+
+              // Initial selection of all fields based on event
+              changeSelections()
+
+              // Filtering on change in event selection
+              $('#eventSelect').change(function() {
+                changeSelections();
+              });
+
+            });
+          </script>
+
+        </span>
+      </div>
+      <div class="col-sm">
+        <span>
+        </span>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

@@ -4,8 +4,14 @@
     {% block head %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="google-site-verification" content="B8OXCKjgqQyAwtVVYE7yJ4BAMWuzSEMV2DgYxEvotk0" />
-    <title>{% block title %}{% endblock %} - Live League</title>
+    <meta name="google-site-verification" content="B8OXCKjgqQyAwtVVYE7yJ4BAMWuzSEMV2DgYxEvotk0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="description" content="{% block description %}{% endblock %}"/>
+    {% if request.path == '/' %}
+      <title>Live League | The UK's biggest underground music competition.</title>
+    {% else %}
+      <title>{% block title %}{% endblock %} - Live League</title>
+    {% endif %}
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet">
     <!-- Icons -->
@@ -68,6 +74,11 @@
             <li class="nav-item">
               <a class="nav-link active" href="{{ url_for('contact') }}">Contact</a>
             </li>
+            {% if is_promoter %}
+              <li class="nav-item">
+                <a class="nav-link active" href="{{ url_for('dashboard') }}">Dashboard</a>
+              </li>
+            {% endif %}
             <li class="nav-item">
               {% if session.token %}
                 <a class="nav-link active" href="{{ url_for('account') }}">Account</a>
@@ -75,7 +86,6 @@
                 <a class="nav-link active" href="{{ url_for('sign_in') }}">Sign In</a>
               {% endif %}
             </li>
-
             <li class="nav-item">
               {% if cart_quantities == 0 %}
                 <a class="nav-link active" href="{{ url_for('cart') }}" id="nav-cart"><i class="fas fa-shopping-cart"></i></a>
@@ -88,9 +98,9 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link active" href="{{ url_for('social', platform='facebook') }}"><i class="fab fa-facebook"></i></a>
-                <a class="nav-link active" href="{{ url_for('social', platform='instagram') }}"><i class="fab fa-instagram"></i></a>
-                <a class="nav-link active" href="{{ url_for('social', platform='twitter') }}"><i class="fab fa-twitter-square"></i></a>
+                <a class="nav-link active" href="https://www.facebook.com/livemusicleague" target="_blank"><i class="fab fa-facebook"></i></a>
+                <a class="nav-link active" href="https://www.instagram.com/livemusicleague" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a class="nav-link active" href="https://www.twitter.com/livemusicleague" target="_blank"><i class="fab fa-twitter"></i></i></a>
             </li>
 
           </ul>

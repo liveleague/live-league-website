@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block title %}Create Venue{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <span>
+              <nav aria-label="breadcrumb" role="navigation">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('create', category='venue') }}">Create Venue</a></li>
+                  </ol>
+                </nav>
+          </span>
+        </div>
+    </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <span>
+          <!-- Main -->
+          <h1><b>Create Venue</b></h1>
+
+          <form action="" method="post" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+
+            {% if messages %}
+              {% for message in messages %}
+                <span style="color: white;">[{{ message }}]</span><br>
+              {% endfor %}
+              <p>&nbsp;</p>
+            {% endif %}
+
+            <!-- Name -->
+            <div id="name-div" class="form-group">
+              {{ form.name.label(for="NameInput") }}
+              {{ form.name(type="text", class="form-control", id="NameInput", placeholder="Enter name") }}
+              {% for error in form.name.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Description -->
+            <div id="description-div" class="form-group">
+              <p>&nbsp;</p>
+              {{ form.description.label(for="DescriptionInput") }}
+              {{ form.description(type="text", class="form-control", id="DescriptionInput", placeholder="Enter description") }}
+              {% for error in form.description.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+              <p>&nbsp;</p>
+            </div>
+
+            <!-- Address Line 1 -->
+            <div id="name-div" class="form-group">
+              {{ form.address_line1.label(for="AddressLine1Input") }}
+              {{ form.address_line1(type="text", class="form-control", id="AddressLine1Input", placeholder="Enter address line 1") }}
+              {% for error in form.address_line1.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Address Line 2 -->
+            <div id="name-div" class="form-group">
+              {{ form.address_line2.label(for="AddressLine2Input") }}
+              {{ form.address_line2(type="text", class="form-control", id="AddressLine2Input", placeholder="Enter address line 2") }}
+              {% for error in form.address_line2.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Address Zip -->
+            <div id="name-div" class="form-group">
+              {{ form.address_zip.label(for="AddressZipInput") }}
+              {{ form.address_zip(type="text", class="form-control", id="AddressZipInput", placeholder="Enter postcode") }}
+              {% for error in form.address_zip.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Address City * -->
+            <div id="name-div" class="form-group">
+              {{ form.address_city.label(for="AddressCityInput") }}
+              {{ form.address_city(type="text", class="form-control", id="AddressCityInput", placeholder="Enter city") }}
+              {% for error in form.address_city.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Address State -->
+            <div id="name-div" class="form-group">
+              {{ form.address_state.label(for="AddressStateInput") }}
+              {{ form.address_state(type="text", class="form-control", id="AddressStateInput", placeholder="Enter county") }}
+              {% for error in form.address_state.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Address Country -->
+            <div id="country-code-div">
+              {{ form.address_country.label(for="exampleInputCountryCode1") }}
+              {{ form.address_country(id="country-code-select", type="text", class="form-control", placeholder="Enter country code", **{'aria-describedby':"CountryCodeHelp"}) }}
+              {% for error in form.address_country.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <p>&nbsp;</p>
+
+            <p>To embed a map:</p>
+            <ol>
+              <li>Open Google Maps</li>
+              <li>Go to the venue</li>
+              <li>Click 'Share'</li>
+              <li>Click 'Embed a map'</li>
+              <li>Click 'Copy HTML' and paste it below:</li>
+            </ol>
+
+            <!-- Google Maps -->
+            <div id="country-code-div">
+              {{ form.google_maps(id="google-maps-input", type="text", class="form-control", placeholder="Enter HTML", **{'aria-describedby':"GoogleMapsHelp"}) }}
+              {% for error in form.google_maps.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <p>&nbsp;</p>
+
+            <!-- Image (register-artist-promoter only) -->
+            <div id="image-div">
+              {{ form.image.label(for="ImageInput") }}<br>
+              {{ form.image(type="file", class="form-control-file", id="ImageInput", placeholder="Upload profile picture") }}
+              {% for error in form.image.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <p>&nbsp;</p>
+
+            <!-- Submit button -->
+            {{ form.submit(id="register-submit-btn", type="submit", class="btn btn-primary") }}
+          </form>
+
+          <script>
+            $(document).ready(function() {
+              $('option').css('color', 'black');
+              $('#country-code-select').val('GB');
+            });
+          </script>
+
+        </span>
+      </div>
+      <div class="col-sm">
+        <span>
+        </span>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

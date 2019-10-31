@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}Create Event{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <span>
+              <nav aria-label="breadcrumb" role="navigation">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('create', category='event') }}">Create Event</a></li>
+                  </ol>
+                </nav>
+          </span>
+        </div>
+    </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <span>
+          <!-- Main -->
+          <h1><b>Create Event</b></h1>
+
+          <form action="" method="post" enctype="multipart/form-data" novalidate>
+            {{ form.hidden_tag() }}
+
+            {% if messages %}
+              {% for message in messages %}
+                <span style="color: white;">[{{ message }}]</span><br>
+              {% endfor %}
+              <p>&nbsp;</p>
+            {% endif %}
+
+            <!-- Name -->
+            <div id="name-div" class="form-group">
+              {{ form.name.label(for="NameInput") }}
+              {{ form.name(type="text", class="form-control", id="NameInput", placeholder="Enter name") }}
+              {% for error in form.name.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Description -->
+            <div id="description-div" class="form-group">
+              <p>&nbsp;</p>
+              {{ form.description.label(for="DescriptionInput") }}
+              {{ form.description(type="text", class="form-control", id="DescriptionInput", placeholder="Enter description") }}
+              {% for error in form.description.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+              <p>&nbsp;</p>
+            </div>
+
+            <!-- Venue -->
+            <div class="form-group">
+              <label for="venueSelect">Venue *</label>
+              <select class="form-control" id="venueSelect" name="venue-select" required>
+                <option class="type-option" value="None">Select a venue...</option>
+                {% for venue in venues %}
+                  <option class="venue-option" value="{{ venue.slug }}">{{ venue.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Start Date -->
+            <div id="name-div" class="form-group">
+              {{ form.start_date.label(for="StartDateInput") }}
+              {{ form.start_date(type="date", class="form-control", id="StartDateInput", placeholder="Enter start date") }}
+              {% for error in form.start_date.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- Start Time -->
+            <div id="name-div" class="form-group">
+              {{ form.start_time.label(for="StartTimeInput") }}
+              {{ form.start_time(type="time", class="form-control", id="StartTimeInput", placeholder="Enter start time") }}
+              {% for error in form.start_time.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- End Date -->
+            <div id="name-div" class="form-group">
+              {{ form.end_date.label(for="EndDateInput") }}
+              {{ form.end_date(type="date", class="form-control", id="EndDateInput", placeholder="Enter end date") }}
+              {% for error in form.end_date.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <!-- End Time -->
+            <div id="name-div" class="form-group">
+              {{ form.end_time.label(for="EndTimeInput") }}
+              {{ form.end_time(type="time", class="form-control", id="EndTimeInput", placeholder="Enter end time") }}
+              {% for error in form.end_time.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <p>&nbsp;</p>
+
+            <p>To select multiple artists, hold down:</p>
+            <ul>
+              <li>'Ctrl' on Windows</li>
+              <li>'Command' on Mac</li>
+            </ul>
+
+            <!-- Lineup -->
+            <div class="form-group">
+              <label for="artistSelect">Lineup</label>
+              <select multiple class="form-control" id="artistSelect" size="10">
+                {% for artist in artists %}
+                  <option class="artist-option" value="{{ artist.slug }}">{{ artist.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <p>&nbsp;</p>
+
+            <!-- Image (register-artist-promoter only) -->
+            <div id="image-div">
+              {{ form.image.label(for="ImageInput") }}<br>
+              {{ form.image(type="file", class="form-control-file", id="ImageInput", placeholder="Upload profile picture") }}
+              {% for error in form.image.errors %}
+                <span style="color: white;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+
+            <p>&nbsp;</p>
+
+            <!-- Submit button -->
+            {{ form.submit(id="register-submit-btn", type="submit", class="btn btn-primary") }}
+          </form>
+
+          <script>
+            $(document).ready(function() {
+              $('.venue-option').css('color', 'black');
+              $('#venueSelect').val('None');
+            });
+          </script>
+
+        </span>
+      </div>
+      <div class="col-sm">
+        <span>
+        </span>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}
