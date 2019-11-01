@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Create Ticket{% endblock %}
+{% block title %}Create Ticket Type{% endblock %}
 {% block head %}
   {{ super() }}
 {% endblock %}
@@ -12,7 +12,7 @@
               <nav aria-label="breadcrumb" role="navigation">
                   <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('create', category='ticket') }}">Create Ticket</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('create', category='ticket_type') }}">Create Ticket Type</a></li>
                   </ol>
                 </nav>
           </span>
@@ -23,7 +23,7 @@
       <div class="col-sm">
         <span>
           <!-- Main -->
-          <h1><b>Create Ticket</b></h1>
+          <h1><b>Create Ticket Type</b></h1>
 
           <form action="" method="post">
 
@@ -44,44 +44,28 @@
               </select>
             </div>
 
-            <!-- Type -->
-            <div class="form-group">
-              <label for="typeSelect">Type *</label>
-              <select class="form-control child-select" id="typeSelect" name="type-select" required>
-                <option class="type-option" value="None">Select a ticket type...</option>
-                {% for event in events %}
-                  {% for ticket_type in event.ticket_types %}
-                    {% if ticket_type.tickets_remaining > 0 %}
-                      <option class="type-option" data-id="{{ event.id }}" value="{{ ticket_type.slug }}">{{ ticket_type.name }} - £{{ ticket_type.price }}</option>
-                    {% endif %}
-                  {% endfor %}
-                {% endfor %}
-              </select>
+            <!-- Name -->
+            <div id="name-div" class="form-group">
+                <label for="example-name-input">Name *</label>
+                <div>
+                  <input class="form-control" type="text" name="name-input" id="name-input">
+                </div>
             </div>
 
-            <!-- Quantity -->
+            <!-- Price -->
             <div class="form-group">
-              <label for="example-number-input">Quantity *</label>
+              <label for="example-number-input">Price *</label>
               <div>
-                <input class="form-control" type="number" name="quantity-input" value="1" id="example-number-input" min="1">
+                <input class="form-control" type="number" name="price-input" id="price-input" min="1">
               </div>
             </div>
 
-            <!-- Vote -->
+            <!-- Tickets Remaining -->
             <div class="form-group">
-              <label for="voteSelect">Vote</label>
-              <select class="form-control child-select" id="voteSelect" name="vote-select">
-                <option class="vote-option" value="None">Select an artist...</option>
-                {% for event in events %}
-                  {% for tally in event.lineup %}
-                    {% if event_id %}
-                      <option class="vote-option" data-id="{{ event.id }}" value="{{ tally.slug }}">{{ tally.artist }}</option>
-                    {% else %}
-                      <option class="vote-option" data-id="{{ event.id }}" value="{{ tally.tally }}">{{ tally.artist }}</option>
-                    {% endif %}
-                  {% endfor %}
-                {% endfor %}
-              </select>
+              <label for="example-number-input">Tickets Remaining</label>
+              <div>
+                <input class="form-control" type="number" name="tickets-remaining-input" id="tickets-remaining-input" min="0">
+              </div>
             </div>
 
             <p>&nbsp;</p>

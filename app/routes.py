@@ -375,20 +375,33 @@ def dashboard():
     )
     event_ids = []
     tallies = []
+    artists = []
     for event in events:
         event_ids.append(event['id'])
     all_tallies = pub.list_tallies()
     for tally in all_tallies:
         if tally['event_id'] in event_ids:
             tallies.append(tally)
-    '''
     for tally in tallies:
-    '''
+        entry = {
+                    'artist': tally['artist'],
+                    'slug': tally['artist_slug'],
+                    'tallies': []
+                }
+        if entry not in artists:
+            artists.append(entry)
+    for artist in artists:
+        for tally in tallies:
+            if tally['artist'] == artist['artist']:
+                artist['tallies'].append(tally)
+    artists = sorted(artists, key=itemgetter('artist'))
+    venues = pub.list_venues()['json']
     return render_template(
         'dashboard.html',
         account=account,
         events=events,
-        tallies=tallies
+        artists=artists,
+        venues=venues
     )
 
 @app.route('/create/<category>', methods=['GET', 'POST'])
@@ -510,6 +523,28 @@ def create(category, event_id=None):
             artists=artists,
             messages=messages
         )
+    if category == 'ticket_type':
+        account = Private(session['token']).get_account()['json']
+        if event_id:
+            events = [pub.get_event(id=event_id)]
+        else:
+            events = pub.list_events(
+                promoter=account['slug'], when='current_and_upcoming'
+            )
+            if request.method == 'POST':
+                event = request.form['event-select']
+                name = request.form['name-input']
+                price = request.form['price-input']
+                tickets_remaining = request.form['tickets-remaining-input']
+                ticket_type = Private(session['token']).create_ticket_type(
+                    event=event, name=name, price=price,
+                    tickets_remaining=tickets_remaining
+                )
+                if str(event['status']).startswith('2'):
+                    messages.append('Ticket type created successfully.')
+                else:
+                    messages.append(event['json'].values())
+        return render_template('create_ticket_type.html', events=events)
     if category == 'ticket':
         account = Private(session['token']).get_account()['json']
         if event_id:
@@ -565,14 +600,55 @@ def create(category, event_id=None):
 
 @app.route('/edit/<category>', methods=['GET', 'POST'])
 @app.route('/edit/<category>/<int:event_id>', methods=['GET', 'POST'])
+@app.route('/edit/<category>/<venue_slug>', methods=['GET', 'POST'])
 @login_required
-def edit(category, event_id=None):
+def edit(category, event_id=None, venue_slug=None):
     """Edit page."""
     account = Private(session['token']).get_account()['json']
     status = Private(session['token']).get_account()['status']
     messages = []
     if not str(status).startswith('2'):
         return redirect(url_for('sign_in'))
+    if category == 'venue':
+        if not account['is_promoter'] or not account['is_verified']:
+            return redirect(url_for('account'))
+        else:
+            form = VenueForm()
+            if venue_slug:
+                venues = [pub.get_venue(slug=venue_slug)['json']]
+            else:
+                venues = pub.list_venues()['json']
+            if request.method == 'POST':
+                venue = request.form['venue-select']
+                name = request.form['name']
+                description = request.form['description']
+                address_line1 = request.form['address_line1']
+                address_line2 = request.form['address_line2']
+                address_zip = request.form['address_zip']
+                address_state = request.form['address_state']
+                address_city = request.form['address_city']
+                address_state = request.form['address_state']
+                address_country = request.form['address_country']
+                google_maps = request.form['google_maps']
+                image = request.files['image']
+                path = image_to_path(image)
+                venue = Private(session['token']).edit_venue(
+                    venue=venue, name=name, description=description,
+                    address_line1=address_line1, address_line2=address_line2,
+                    address_zip=address_zip, address_city=address_city,
+                    address_state=address_state,
+                    address_country=address_country, google_maps=google_maps,
+                    image=path
+                )
+                if str(event['status']).startswith('2'):
+                    messages.append('Venue edited successfully.')
+                else:
+                    messages.append(event['json'].values())
+            return render_template(
+                'edit_venue.html',
+                form=form,
+                venues=venues
+            )
     if category == 'event':
         if not account['is_promoter'] or not account['is_verified']:
             return redirect(url_for('account'))

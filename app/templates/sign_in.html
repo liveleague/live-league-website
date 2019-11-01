@@ -237,14 +237,13 @@
               {% for error in register_artist_promoter_form.image.errors %}
                 <span style="color: white;">[{{ error }}]</span>
               {% endfor %}
+              <p>&nbsp;</p>
             </div>
 
-            <p>&nbsp;</p>
-
             <!-- Submit button -->
-            {{ login_form.submit(id="login-submit-btn", type="submit", class="btn btn-primary") }}
-            {{ register_user_form.submit(id="register-user-submit-btn", style="display: none;", type="submit", class="btn btn-primary") }}
-            {{ register_artist_promoter_form.submit(id="register-artist-promoter-submit-btn", style="display: none;", type="submit", class="btn btn-primary") }}
+            {{ login_form.submit(id="login-submit-btn", type="submit", class="btn btn-default") }}
+            {{ register_user_form.submit(id="register-user-submit-btn", style="display: none;", type="submit", class="btn btn-default") }}
+            {{ register_artist_promoter_form.submit(id="register-artist-promoter-submit-btn", style="display: none;", type="submit", class="btn btn-default") }}
           </form>
 
           <p>&nbsp;</p>

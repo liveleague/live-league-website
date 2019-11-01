@@ -28,18 +28,99 @@
               <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='artist') }}"> Artist</a><br>
               <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='venue') }}"> Venue</a><br>
               <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='event') }}"> Event</a><br>
+              <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='ticket_type') }}"> Ticket Type</a><br>
               <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='ticket') }}"> Ticket</a><br>
               <p>&nbsp;</p>
               <p><b>View:</b></p>
-              <button type="button" class="btn btn-default" style="width: 150px;" disabled>Artists</button><br>
-              <button type="button" class="btn btn-default" style="width: 150px;">Events</button><br>
-              <button type="button" class="btn btn-default" style="width: 150px;" disabled>Ticket Types</button><br>
-              <button type="button" class="btn btn-default" style="width: 150px;" disabled>Tickets</button><br>
+              <button type="button" id="artists-btn" class="btn btn-default" style="width: 150px;">Artists</button><br>
+              <button type="button" id="venues-btn" class="btn btn-default" style="width: 150px;">Venues</button><br>
+              <button type="button" id="events-btn" class="btn btn-default" style="width: 150px;">Events</button><br>
+              <button type="button" id="ticket-types-btn" class="btn btn-default" style="width: 150px;" disabled>Ticket Types</button><br>
+              <button type="button" id="tickets-btn" class="btn btn-default" style="width: 150px;" disabled>Tickets</button><br>
           </span>
         </div>
         <div class="col-sm-9">
           <span>
-              {% if events %}
+
+            {% if artists %}
+              <span id="artists-view" style="display: none;">
+                <!-- Table (Artists) -->
+                <p>&nbsp;</p>
+                <table class="table">
+                  <thead>
+                    <tr>
+                        <td class="text-center" colspan="5"><b>ARTISTS</b></td>
+                    </tr>
+                    <tr>
+                      <th>Name</th>
+                      <th>Event</th>
+                      <th>Votes</th>
+                      <th>Points</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for row in artists %}
+                      {% if row['tallies']|length == 1 %}
+                        <tr>
+                          <td><a href="{{ url_for('artist', slug=row['slug']) }}" target="_blank">{{ row['artist'] }}</a></td>
+                          <td><a href="{{ url_for('event', id=row['tallies'][0]['event_id']) }}">{{ row['tallies'][0]['event'] }}</a></td>
+                          <td>{{ row['tallies'][0]['votes'] }}</td>
+                          {% if row['tallies'][0]['points'] %}
+                            <td>{{ row['tallies'][0]['points'] }}</td>
+                          {% else %}
+                            <td>0</td>
+                          {% endif %}
+                        </tr>
+                      {% elif row['tallies']|length > 1 %}
+                        {% for subrow in row['tallies'] %}
+                          <tr>
+                            <td><a href="{{ url_for('artist', slug=row['slug']) }}" target="_blank">{{ row['artist'] }}</a></td>
+                            <td><a href="{{ url_for('event', id=subrow['event_id']) }}">{{ subrow['event'] }}</a></td>
+                            <td>{{ subrow['votes'] }}</td>
+                            {% if subrow['points'] %}
+                              <td>{{ subrow['points'] }}</td>
+                            {% else %}
+                              <td>0</td>
+                            {% endif %}
+                          </tr>
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </span>
+            {% endif %}
+
+            {% if venues %}
+            <span id="venues-view" style="display: none;">
+              <!-- Table (Venues) -->
+              <p>&nbsp;</p>
+              <table class="table">
+                <thead>
+                  <tr>
+                      <td class="text-center" colspan="5"><b>VENUES</b></td>
+                  </tr>
+                  <tr>
+                    <th>Name</th>
+                    <th>Edit</th>
+                    <th>City</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for row in venues %}
+                  <tr>
+                    <td><a href="{{ url_for('venue', slug=row['slug']) }}" target="_blank">{{ row['name'] }}</a></td>
+                    <td><a href="{{ url_for('edit', category='venue', venue_slug=row['slug']) }}"><i class="far fa-edit"></i></a></td>
+                    <td>{{ row['address_city'] }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+          </span>
+        {% endif %}
+
+            {% if events %}
+            <span id="events-view">
               <!-- Table (Events) -->
               <p>&nbsp;</p>
               <table class="table">
@@ -67,42 +148,56 @@
                 {% endfor %}
                 </tbody>
               </table>
-            {% endif %}
-
-            {% if tallies %}
-              <!-- Table (Artists) -->
-              <p>&nbsp;</p>
-              <table class="table">
-                <thead>
-                  <tr>
-                      <td class="text-center" colspan="5"><b>ARTISTS</b></td>
-                  </tr>
-                  <tr>
-                    <th>Name</th>
-                    <th>Event</th>
-                    <th>Votes</th>
-                    <th>Points</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {% for row in tallies %}
-                  <tr>
-                      <td><a href="{{ url_for('artist', slug=row['artist_slug']) }}" target="_blank">{{ row['artist'] }}</a></td>
-                      <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
-                      <td>{{ row['votes'] }}</td>
-                      {% if row['points'] %}
-                        <td>{{ row['points'] }}</td>
-                      {% else %}
-                        <td>0</td>
-                      {% endif %}
-                  </tr>
-                {% endfor %}
-                </tbody>
-              </table>
-            {% endif %}
+          </span>
+        {% endif %}
 
             <script>
               $(document).ready(function() {
+
+                // Initialise
+                $("#events-btn").css("color", "#ba54f5");
+
+                $("#artists-btn").click(function() {
+
+                  $("#artists-btn").css("color", "#ba54f5");
+                  $("#venues-btn").css("color", "white");
+                  $("#events-btn").css("color", "white");
+
+                  $("#artists-view").show();
+                  $("#venues-view").hide();
+                  $("#events-view").hide();
+                  // $("#ticket-types-view").hide();
+                  // $("#tickets-view").hide();
+
+                });
+
+                $("#venues-btn").click(function() {
+
+                  $("#artists-btn").css("color", "white");
+                  $("#venues-btn").css("color", "#ba54f5");
+                  $("#events-btn").css("color", "white");
+
+                  $("#artists-view").hide();
+                  $("#venues-view").show();
+                  $("#events-view").hide();
+                  // $("#ticket-types-view").hide();
+                  // $("#tickets-view").hide();
+
+                });
+
+                $("#events-btn").click(function() {
+
+                  $("#artists-btn").css("color", "white");
+                  $("#venues-btn").css("color", "white");
+                  $("#events-btn").css("color", "#ba54f5");
+
+                  $("#artists-view").hide();
+                  $("#venues-view").hide();
+                  $("#events-view").show();
+                  // $("#ticket-types-view").hide();
+                  // $("#tickets-view").hide();
+
+                });
 
               });
             </script>

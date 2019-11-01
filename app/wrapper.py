@@ -62,11 +62,7 @@ class Public(object):
             'spotify': spotify, 'twitter': twitter, 'website': website,
             'youtube': youtube
         }
-        print('this is the image')
-        print(image)
         files = image_to_files(image)
-        print('this is files')
-        print(files)
         artist = self.api_call('/user/create/artist/', 'POST', json, files)
         return artist
 
@@ -301,11 +297,22 @@ class Private(object):
         json = {
             'name': name, 'venue': venue, 'start_date': start_date,
             'start_time': start_time, 'end_date': end_date,
-            'end_time': end_time, 'description': description, 'image': image
+            'end_time': end_time, 'description': description
         }
         files = image_to_files(image)
         event = self.api_call('/league/create/event', 'POST', json, files)
         return event
+
+    def create_ticket_type(self, event, name, price, tickets_remaining=None):
+        """Create a ticket type."""
+        json = {
+            'name': name, 'price': price,
+            'tickets_remaining': tickets_remaining
+        }
+        ticket_type = self.api_call(
+            '/league/create/ticket_type/', 'POST', json
+        )
+        return ticket_type
 
     def create_ticket(self, ticket_type):
         """Create a ticket."""
@@ -313,13 +320,30 @@ class Private(object):
         ticket = self.api_call('/league/create/ticket/', 'POST', json)
         return ticket
 
+    def edit_venue(self, venue, name, address_line1, address_zip, address_city,
+                   address_country, description=None, address_line2=None,
+                   address_state=None, google_maps=None, image=None):
+        """Edit a venue."""
+        json = {
+            'name': name, 'description': description,
+            'address_line1': address_line1, 'address_line2': address_line2,
+            'address_zip': address_zip, 'address_city': address_city,
+            'address_state': address_state, 'address_country': address_country,
+            'google_maps': google_maps
+        }
+        files = image_to_files(image)
+        venue = self.api_call(
+            '/league/edit/venue' + venue, 'PATCH', json, files
+        )
+        return venue
+
     def edit_event(self, event, name, venue, start_date, start_time, end_date,
                    end_time, description=None, image=None):
         """Edit an event."""
         json = {
             'name': name, 'venue': venue, 'start_date': start_date,
             'start_time': start_time, 'end_date': end_date,
-            'end_time': end_time, 'description': description, 'image': image
+            'end_time': end_time, 'description': description
         }
         files = image_to_files(image)
         event = self.api_call(

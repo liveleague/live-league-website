@@ -88,7 +88,6 @@ class VenueForm(FlaskForm):
 class EventForm(FlaskForm):
     name = StringField('Name *', validators=[DataRequired()])
     description = TextAreaField('Description')
-    # venue = passed in via routes.py
     start_date = DateField('Start date *', validators=[DataRequired()])
     start_time = TimeField('Start time *', validators=[DataRequired()])
     end_date = DateField('End date *', validators=[DataRequired()])

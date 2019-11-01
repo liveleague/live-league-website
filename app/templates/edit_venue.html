@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Create Venue{% endblock %}
+{% block title %}Edit Venue{% endblock %}
 {% block head %}
   {{ super() }}
 {% endblock %}
@@ -12,7 +12,7 @@
               <nav aria-label="breadcrumb" role="navigation">
                   <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('create', category='venue') }}">Create Venue</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('edit', category='venue') }}">Edit Venue</a></li>
                   </ol>
                 </nav>
           </span>
@@ -23,7 +23,7 @@
       <div class="col-sm">
         <span>
           <!-- Main -->
-          <h1><b>Create Venue</b></h1>
+          <h1><b>Edit Venue</b></h1>
 
           <form action="" method="post" enctype="multipart/form-data" novalidate>
             {{ form.hidden_tag() }}
@@ -34,6 +34,29 @@
               {% endfor %}
               <p>&nbsp;</p>
             {% endif %}
+
+            <!-- Venue -->
+            <div class="form-group">
+              <label for="venueSelect">Venue *</label>
+              <select class="form-control" id="venueSelect" name="venue-select" required>
+                {% for venue in venues %}
+                  <option class="venue-option"
+                          data-slug="{{ venue.slug }}"
+                          data-name="{{ venue.name }}"
+                          data-description="{{ venue.description }}"
+                          data-address-line1="{{ venue.address_line1 }}"
+                          data-address-line2="{{ venue.address_line2 }}"
+                          data-postcode="{{ venue.address_zip }}"
+                          data-city="{{ venue.address_city }}"
+                          data-county="{{ venue.address_county }}"
+                          data-country="{{ venue.address_country }}"
+                          data-google-maps="{{ venue.google_maps }}"
+                          data-image="{{ venue.image }}">
+                          {{ venue.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
 
             <!-- Name -->
             <div id="name-div" class="form-group">
@@ -133,6 +156,8 @@
             <!-- Image (register-artist-promoter only) -->
             <div id="image-div">
               {{ form.image.label(for="ImageInput") }}<br>
+              <img src="#" id="profile-picture" class="img-rounded">
+              <p>&nbsp;</p>
               {{ form.image(type="file", class="form-control-file", id="ImageInput", placeholder="Upload profile picture") }}
               {% for error in form.image.errors %}
                 <span style="color: white;">[{{ error }}]</span>
@@ -149,6 +174,47 @@
             $(document).ready(function() {
               $('option').css('color', 'black');
               $('#country-code-select').val('GB');
+
+              function changeSelections() {
+                var slug = $("#venueSelect option:selected").data("slug");
+                var name = $("#venueSelect option:selected").data("name");
+                var description = $("#venueSelect option:selected").data("description");
+                var addressLine1 = $("#venueSelect option:selected").data("address-line1");
+                var addressLine2 = $("#venueSelect option:selected").data("address-line2");
+                var postcode = $("#venueSelect option:selected").data("postcode");
+                var city = $("#venueSelect option:selected").data("city");
+                var county = $("#venueSelect option:selected").data("county");
+                var country = $("#venueSelect option:selected").data("country");
+                var googleMaps = $("#venueSelect option:selected").data("google-maps");
+                var image = $("#venueSelect option:selected").data("image");
+                
+                $("#NameInput").val(name);
+                $("#DescriptionInput").val(description);
+                $("#AddressLine1Input").val(addressLine1);
+                $("#AddressLine2Input").val(addressLine2);
+                $("#AddressZipInput").val(postcode);
+                $("#AddressCityInput").val(city);
+                $("#AddressStateInput").val(county);
+                // $(".country-code-select[value="+ country + "]").prop("selected", true);
+                $("#google-maps-input").val(googleMaps);
+                $("#profile-picture").attr("src", image);
+
+                $('input[type=file]').val(null);
+              }
+
+              // Initial selection of all fields based on event
+              changeSelections()
+
+              // Filtering on change in event selection
+              $('#venueSelect').change(function() {
+                changeSelections();
+              });
+
+              // Remove image when file is selected
+              $('input[type=file]').change(function(e) {
+                $("#profile-picture").attr("src", null);
+              });
+
             });
           </script>
 

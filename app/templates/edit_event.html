@@ -83,7 +83,7 @@
             <div class="form-group">
               <label for="venueSelect">Venue *</label>
               <select class="form-control child-select" id="venueSelect" name="venue-select" required>
-                <option class="type-option" value="None">Select a venue...</option>
+                <option class="type-option venue-option" value="None">Select a venue...</option>
                 {% for venue in venues %}
                   <option class="venue-option" value="{{ venue.slug }}">{{ venue.name }}</option>
                 {% endfor %}
@@ -160,7 +160,7 @@
             <p>&nbsp;</p>
 
             <!-- Submit button -->
-            {{ form.submit(id="register-submit-btn", type="submit", class="btn btn-primary") }}
+            {{ form.submit(id="register-submit-btn", type="submit", class="btn btn-default") }}
           </form>
 
           <script>
@@ -212,6 +212,8 @@
                 $("#EndDateInput").val(endDate);
                 $("#EndTimeInput").val(endTime);
                 $("#profile-picture").attr("src", image);
+
+                $('input[type=file]').val(null);
               }
 
               // Initial selection of all fields based on event
@@ -220,6 +222,11 @@
               // Filtering on change in event selection
               $('#eventSelect').change(function() {
                 changeSelections();
+              });
+
+              // Remove image when file is selected
+              $('input[type=file]').change(function(e) {
+                $("#profile-picture").attr("src", null);
               });
 
             });
