@@ -306,11 +306,11 @@ class Private(object):
     def create_ticket_type(self, event, name, price, tickets_remaining=None):
         """Create a ticket type."""
         json = {
-            'name': name, 'price': price,
+            'event': event, 'name': name, 'price': price,
             'tickets_remaining': tickets_remaining
         }
         ticket_type = self.api_call(
-            '/league/create/ticket_type/', 'POST', json
+            '/league/create/ticket-type/', 'POST', json
         )
         return ticket_type
 
@@ -350,6 +350,12 @@ class Private(object):
             '/league/edit/event' + event, 'PATCH', json, files
         )
         return event
+    
+    def edit_ticket_type(self, name, tickets_remaining=None):
+        """Edit a ticket type."""
+        json = {'name': name, 'tickets_remaining': tickets_remaining}
+        ticket_type = self.api_call('/league/edit/ticket-type/', 'PATCH', json)
+        return ticket_type
 
     def get_account(self):
         """Retrieve the user's account."""
@@ -378,7 +384,7 @@ class Private(object):
     def list_tickets(self, when='all'):
         """List the user's tickets."""
         response = self.api_call(
-            '/league/list/tickets?ordering=ticket_type__event__start_date'
+            '/league/list/tickets?ordering=-id'
         )
         tickets = []
         for ticket in response['json']:

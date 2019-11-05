@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Edit Ticket Type{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <span>
+              <nav aria-label="breadcrumb" role="navigation">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('edit', category='ticket_type') }}">Edit Ticket Type</a></li>
+                  </ol>
+                </nav>
+          </span>
+        </div>
+    </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <span>
+          <!-- Main -->
+          <h1><b>Edit Ticket Type</b></h1>
+
+          <form action="" method="post">
+
+            {% if messages %}
+              {% for message in messages %}
+                <span style="color: white;">[{{ message }}]</span><br>
+              {% endfor %}
+              <p>&nbsp;</p>
+            {% endif %}
+
+            <!-- Event -->
+            <div class="form-group">
+              <label for="eventSelect">Event *</label>
+              <select class="form-control" id="eventSelect" name="event-select" required>
+                {% for event in events %}
+                  <option class="event-option"
+                  data-id="{{ event.id }}"
+                  {% for ticket_type in event.ticket_types %}
+                    data-ticket-type-name="{{ ticket_type.name }}"
+                    data-ticket-type-tickets-remaining="{{ ticket_type.tickets_remaining }}"
+                    data-ticket-type-slug="{{ ticket_type.slug }}"
+                  {% endfor %}>
+                {{ event.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Ticket Type -->
+            <div class="form-group">
+              <label for="ticketTypeSelect">Ticket Type *</label>
+              <select class="form-control child-select" id="ticketTypeSelect" name="ticket-type-select" required>
+                {% if not ticket_type_slug %}
+                  <option class="type-option" value="None">Select a ticket type...</option>
+                {% endif %}
+                {% for ticket_type in ticket_types %}
+                  <option class="ticket-type-option" value="{{ ticket_type.slug }}"
+                    data-name="{{ ticket_type.name }}"
+                    data-event="{{ ticket_type.event }}"
+                    data-tickets-remaining="{{ ticket_type.tickets_remaining }}">
+                    {{ ticket_type.name }} - £{{ ticket_type.price }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Name -->
+            <div id="name-div" class="form-group">
+                <label for="example-name-input">Name *</label>
+                <div>
+                  <input class="form-control" type="text" name="name-input" id="name-input">
+                </div>
+            </div>
+
+            <!-- Tickets Remaining -->
+            <div class="form-group">
+              <label for="tickets-remaining-input">Tickets Remaining</label>
+              <div>
+                <input class="form-control" type="number" name="tickets-remaining-input" id="tickets-remaining-input" min="0">
+              </div>
+            </div>
+
+            <p>&nbsp;</p>
+
+            <button type="submit" class="btn btn-default">Submit</button>
+
+          </form>
+
+          <script>
+            $(document).ready(function() {
+
+              // Add text colour to dropdown options
+              $("option").css("color", "black");
+
+              function changeOptions() {
+                var event = $("#eventSelect option:selected").data("id");
+                var name = $("#ticketTypeSelect option:selected").data("name");
+                var ticketsRemaining = $("#ticketTypeSelect option:selected").data("tickets-remaining");
+                $(".child-select").find("option").hide();
+                $(".child-select").find("option[data-event=" + event + "]").show();
+                $("#name-input").val(name);
+                $("#tickets-remaining-input").val(ticketsRemaining);
+              }
+
+              // Initial filtering of ticket_types and tallies based on default event selection
+              changeOptions()
+
+              // Filtering on change in event selection
+              $('#eventSelect').change(function() {
+                changeOptions();
+              });
+
+              // Filtering on change in ticket type selection
+              $('#ticketTypeSelect').change(function() {
+                changeOptions();
+              });
+
+            });
+          </script>
+
+        </span>
+      </div>
+      <div class="col-sm">
+        <span>
+        </span>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

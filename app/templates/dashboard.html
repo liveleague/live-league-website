@@ -35,7 +35,7 @@
               <button type="button" id="artists-btn" class="btn btn-default" style="width: 150px;">Artists</button><br>
               <button type="button" id="venues-btn" class="btn btn-default" style="width: 150px;">Venues</button><br>
               <button type="button" id="events-btn" class="btn btn-default" style="width: 150px;">Events</button><br>
-              <button type="button" id="ticket-types-btn" class="btn btn-default" style="width: 150px;" disabled>Ticket Types</button><br>
+              <button type="button" id="ticket-types-btn" class="btn btn-default" style="width: 150px;">Ticket Types</button><br>
               <button type="button" id="tickets-btn" class="btn btn-default" style="width: 150px;" disabled>Tickets</button><br>
           </span>
         </div>
@@ -126,13 +126,14 @@
               <table class="table">
                 <thead>
                   <tr>
-                      <td class="text-center" colspan="5"><b>EVENTS</b></td>
+                      <td class="text-center" colspan="6"><b>EVENTS</b></td>
                   </tr>
                   <tr>
                     <th>Date</th>
                     <th>Name</th>
                     <th>Edit</th>
                     <th>Tickets sold</th>
+                    <th>New ticket type</th>
                     <th>New tickets</th>
                   </tr>
                 </thead>
@@ -143,7 +144,78 @@
                       <td><a href="{{ url_for('event', id=row['id']) }}" target="_blank">{{ row['name'] }}</a></td>
                       <td><a href="{{ url_for('edit', category='event', event_id=row['id']) }}"><i class="far fa-edit"></i></a></td>
                       <td>{{ row['tickets_sold'] }}</td>
+                      <td><a href="{{ url_for('create', category='ticket_type', event_id=row['id']) }}"><i class="fas fa-ticket-alt"></i></a></td>
                       <td><a href="{{ url_for('create', category='ticket', event_id=row['id']) }}"><i class="fas fa-plus-square"></i></a></td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+          </span>
+        {% endif %}
+
+            {% if ticket_types %}
+            <span id="ticket-types-view" style="display: none;">
+              <!-- Table (Events) -->
+              <p>&nbsp;</p>
+              <table class="table">
+                <thead>
+                  <tr>
+                      <td class="text-center" colspan="7"><b>TICKET TYPES</b></td>
+                  </tr>
+                  <tr>
+                    <th>Date</th>
+                    <th>Event</th>
+                    <th>Name</th>
+                    <th>Edit</th>
+                    <th>Price</th>
+                    <th>Tickets sold</th>
+                    <th>Tickets remaining</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for row in ticket_types %}
+                  <tr>
+                      <td>{{ row['event_start_date']|date('small') }}</td>
+                      <td><a href="{{ url_for('event', id=row['event']) }}" target="_blank">{{ row['event_name'] }}</a></td>
+                      <td>{{ row['name'] }}</td>
+                      <td><a href="{{ url_for('edit', category='ticket_type', event_id=row['event'], ticket_type_slug=row['slug']) }}"><i class="far fa-edit"></i></a></td>
+                      <td>£{{ row['price'] }}</td>
+                      <td>{{ row['tickets_sold'] }}</td>
+                      <td>{{ row['tickets_remaining'] }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+          </span>
+        {% endif %}
+
+            {% if tickets %}
+            <span id="tickets-view" style="display: none;">
+              <!-- Table (Tickets) -->
+              <p>&nbsp;</p>
+              <table class="table">
+                <thead>
+                  <tr>
+                      <td class="text-center" colspan="6"><b>TICKETS</b></td>
+                  </tr>
+                  <tr>
+                    <th>Date</th>
+                    <th>Code</th>
+                    <th>Owner</th>
+                    <th>Event</th>
+                    <th>Ticket Type</th>
+                    <th>Vote</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for row in tickets %}
+                  <tr>
+                      <td>{{ row['created_at'] }}</td>
+                      <td>{{ row['code'] }}</td>
+                      <td>{{ row['owner'] }}</td>
+                      <td><a href="{{ url_for('event', id=row['event_id']) }}" target="_blank">{{ row['event'] }}</a></td>
+                      <td>{{ row['ticket_type'] }}</td>
+                      <td><a href="{{ url_for('artist', slug=row['vote_slug']) }}" target="_blank">{{ row['vote_artist'] }}</a></td>
                   </tr>
                 {% endfor %}
                 </tbody>
@@ -154,50 +226,95 @@
             <script>
               $(document).ready(function() {
 
+
                 // Initialise
                 $("#events-btn").css("color", "#ba54f5");
+
 
                 $("#artists-btn").click(function() {
 
                   $("#artists-btn").css("color", "#ba54f5");
                   $("#venues-btn").css("color", "white");
                   $("#events-btn").css("color", "white");
+                  $("#ticket-types-btn").css("color", "white");
+                  $("#tickets-btn").css("color", "white");
 
                   $("#artists-view").show();
                   $("#venues-view").hide();
                   $("#events-view").hide();
-                  // $("#ticket-types-view").hide();
-                  // $("#tickets-view").hide();
+                  $("#ticket-types-view").hide();
+                  $("#tickets-view").hide();
 
                 });
+
 
                 $("#venues-btn").click(function() {
 
                   $("#artists-btn").css("color", "white");
                   $("#venues-btn").css("color", "#ba54f5");
                   $("#events-btn").css("color", "white");
+                  $("#ticket-types-btn").css("color", "white");
+                  $("#tickets-btn").css("color", "white");
 
                   $("#artists-view").hide();
                   $("#venues-view").show();
                   $("#events-view").hide();
-                  // $("#ticket-types-view").hide();
-                  // $("#tickets-view").hide();
+                  $("#ticket-types-view").hide();
+                  $("#tickets-view").hide();
 
                 });
+
 
                 $("#events-btn").click(function() {
 
                   $("#artists-btn").css("color", "white");
                   $("#venues-btn").css("color", "white");
                   $("#events-btn").css("color", "#ba54f5");
+                  $("#ticket-types-btn").css("color", "white");
+                  $("#tickets-btn").css("color", "white");
 
                   $("#artists-view").hide();
                   $("#venues-view").hide();
                   $("#events-view").show();
-                  // $("#ticket-types-view").hide();
-                  // $("#tickets-view").hide();
+                  $("#ticket-types-view").hide();
+                  $("#tickets-view").hide();
 
                 });
+
+
+                $("#ticket-types-btn").click(function() {
+
+                  $("#artists-btn").css("color", "white");
+                  $("#venues-btn").css("color", "white");
+                  $("#events-btn").css("color", "white");
+                  $("#ticket-types-btn").css("color", "#ba54f5");
+                  $("#tickets-btn").css("color", "white");
+
+                  $("#artists-view").hide();
+                  $("#venues-view").hide();
+                  $("#events-view").hide();
+                  $("#ticket-types-view").show();
+                  $("#tickets-view").hide();
+
+                });
+
+
+                $("#tickets-btn").click(function() {
+
+                  $("#artists-btn").css("color", "white");
+                  $("#venues-btn").css("color", "white");
+                  $("#events-btn").css("color", "white");
+                  $("#ticket-types-btn").css("color", "white");
+                  $("#tickets-btn").css("color", "#ba54f5");
+
+                  $("#artists-view").hide();
+                  $("#venues-view").hide();
+                  $("#events-view").hide();
+                  $("#ticket-types-view").hide();
+                  $("#tickets-view").show();
+
+                });
+
 
               });
             </script>

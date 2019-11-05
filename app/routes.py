@@ -396,12 +396,21 @@ def dashboard():
                 artist['tallies'].append(tally)
     artists = sorted(artists, key=itemgetter('artist'))
     venues = pub.list_venues()['json']
+    ticket_types = sorted(
+        Private(session['token']).list_ticket_types(),
+        key=itemgetter('event_start_date'),
+        reverse=True
+    )
+    # tickets = Private(session['token']).list_tickets()
+    tickets = None
     return render_template(
         'dashboard.html',
         account=account,
         events=events,
         artists=artists,
-        venues=venues
+        venues=venues,
+        ticket_types=ticket_types,
+        tickets=tickets
     )
 
 @app.route('/create/<category>', methods=['GET', 'POST'])
@@ -601,8 +610,13 @@ def create(category, event_id=None):
 @app.route('/edit/<category>', methods=['GET', 'POST'])
 @app.route('/edit/<category>/<int:event_id>', methods=['GET', 'POST'])
 @app.route('/edit/<category>/<venue_slug>', methods=['GET', 'POST'])
+@app.route('/edit/<category>/<ticket_type_slug>', methods=['GET', 'POST'])
+@app.route(
+    '/edit/<category>/<int:event_id>/<ticket_type_slug>',
+    methods=['GET', 'POST']
+)
 @login_required
-def edit(category, event_id=None, venue_slug=None):
+def edit(category, event_id=None, venue_slug=None, ticket_type_slug=None):
     """Edit page."""
     account = Private(session['token']).get_account()['json']
     status = Private(session['token']).get_account()['status']
@@ -690,6 +704,33 @@ def edit(category, event_id=None, venue_slug=None):
                 form=form,
                 messages=messages
             )
+    if category == 'ticket_type':
+        if ticket_type_slug:
+            ticket_types = [pub.get_ticket_type(slug=ticket_type_slug)['json']]
+        else:
+            ticket_types = Private(session['token']).list_ticket_types()
+        if event_id:
+            events = [pub.get_event(id=event_id)]
+        else:
+            events = pub.list_events(
+                promoter=account['slug'], when='current_and_upcoming'
+            )
+        if request.method == 'POST':
+            name = request.form['name-input']
+            tickets_remaining = request.form['tickets-remaining-input']
+            ticket_type = Private(session['token']).edit_ticket_type(
+                name=name, tickets_remaining=tickets_remaining
+            )
+            if str(event['status']).startswith('2'):
+                messages.append('Ticket type edited successfully.')
+            else:
+                messages.append(event['json'].values())
+        return render_template(
+            'edit_ticket_type.html',
+            events=events,
+            ticket_type_slug=ticket_type_slug,
+            ticket_types=ticket_types
+        )
 
 @app.route('/account')
 @login_required

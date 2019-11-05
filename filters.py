@@ -3,7 +3,7 @@ from datetime import datetime
 def format_date(value, format):
     """Format a date."""
     if value is None:
-        return ""
+        return ''
     else:
         old_format = '%Y-%m-%d'
         if format == 'full':
@@ -14,7 +14,7 @@ def format_date(value, format):
 def format_time(value, format):
     """Format a time."""
     if value is None:
-        return ""
+        return ''
     else:
         old_format = '%H:%M:%S'
         if format == '12':
@@ -22,3 +22,10 @@ def format_time(value, format):
             return datetime.strptime(
                 value, old_format
             ).strftime(new_format).lstrip("0").replace(" 0", " ")
+
+def format_datetime(value, format):
+    """Format a datetime."""
+    if value is None:
+        return ''
+    else:
+        old_format = '%Y-%m-%dT'
