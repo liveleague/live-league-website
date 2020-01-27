@@ -132,11 +132,7 @@
 
             <!-- Image (register-artist-promoter only) -->
             <div id="image-div">
-              {{ form.image.label(for="ImageInput") }}<br>
-              {{ form.image(type="file", class="form-control-file", id="ImageInput", placeholder="Upload profile picture") }}
-              {% for error in form.image.errors %}
-                <span style="color: white;">[{{ error }}]</span>
-              {% endfor %}
+              <input type="file" name="image">
             </div>
 
             <p>&nbsp;</p>

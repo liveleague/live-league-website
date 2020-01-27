@@ -28,15 +28,15 @@
               <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='artist') }}"> Artist</a><br>
               <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='venue') }}"> Venue</a><br>
               <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='event') }}"> Event</a><br>
-              <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='ticket_type') }}"> Ticket Type</a><br>
-              <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='ticket') }}"> Ticket</a><br>
+              <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='ticket-type') }}"> Ticket Type</a><br>
+              <i class="fas fa-plus-square"></i><a href="{{ url_for('create', category='tickets') }}"> Tickets</a><br>
               <p>&nbsp;</p>
               <p><b>View:</b></p>
               <button type="button" id="artists-btn" class="btn btn-default" style="width: 150px;">Artists</button><br>
               <button type="button" id="venues-btn" class="btn btn-default" style="width: 150px;">Venues</button><br>
               <button type="button" id="events-btn" class="btn btn-default" style="width: 150px;">Events</button><br>
               <button type="button" id="ticket-types-btn" class="btn btn-default" style="width: 150px;">Ticket Types</button><br>
-              <button type="button" id="tickets-btn" class="btn btn-default" style="width: 150px;" disabled>Tickets</button><br>
+              <button type="button" id="tickets-btn" class="btn btn-default" style="width: 150px;">Tickets</button><br>
           </span>
         </div>
         <div class="col-sm-9">
@@ -62,8 +62,8 @@
                     {% for row in artists %}
                       {% if row['tallies']|length == 1 %}
                         <tr>
-                          <td><a href="{{ url_for('artist', slug=row['slug']) }}" target="_blank">{{ row['artist'] }}</a></td>
-                          <td><a href="{{ url_for('event', id=row['tallies'][0]['event_id']) }}">{{ row['tallies'][0]['event'] }}</a></td>
+                          <td><a href="{{ url_for('artist', slug=row['slug']) }}" target="_blank">{{ row['artist'] }} <i class="fas fa-external-link-alt"></i></a></td>
+                          <td><a href="{{ url_for('event', event_id=row['tallies'][0]['event_id']) }}" target="_blank">{{ row['tallies'][0]['event'] }} <i class="fas fa-external-link-alt"></i></a></td>
                           <td>{{ row['tallies'][0]['votes'] }}</td>
                           {% if row['tallies'][0]['points'] %}
                             <td>{{ row['tallies'][0]['points'] }}</td>
@@ -74,8 +74,8 @@
                       {% elif row['tallies']|length > 1 %}
                         {% for subrow in row['tallies'] %}
                           <tr>
-                            <td><a href="{{ url_for('artist', slug=row['slug']) }}" target="_blank">{{ row['artist'] }}</a></td>
-                            <td><a href="{{ url_for('event', id=subrow['event_id']) }}">{{ subrow['event'] }}</a></td>
+                            <td><a href="{{ url_for('artist', slug=row['slug']) }}" target="_blank">{{ row['artist'] }} <i class="fas fa-external-link-alt"></i></a></td>
+                            <td><a href="{{ url_for('event', event_id=subrow['event_id']) }}" target="_blank">{{ subrow['event'] }} <i class="fas fa-external-link-alt"></i></a></td>
                             <td>{{ subrow['votes'] }}</td>
                             {% if subrow['points'] %}
                               <td>{{ subrow['points'] }}</td>
@@ -89,139 +89,188 @@
                   </tbody>
                 </table>
               </span>
+            {% else %}
+              <span id="artists-view" style="display: none;">
+                <p align="center">You have not featured any artists yet.</p>
+              </span>
             {% endif %}
 
             {% if venues %}
-            <span id="venues-view" style="display: none;">
-              <!-- Table (Venues) -->
-              <p>&nbsp;</p>
-              <table class="table">
-                <thead>
-                  <tr>
-                      <td class="text-center" colspan="5"><b>VENUES</b></td>
-                  </tr>
-                  <tr>
-                    <th>Name</th>
-                    <th>Edit</th>
-                    <th>City</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {% for row in venues %}
-                  <tr>
-                    <td><a href="{{ url_for('venue', slug=row['slug']) }}" target="_blank">{{ row['name'] }}</a></td>
-                    <td><a href="{{ url_for('edit', category='venue', venue_slug=row['slug']) }}"><i class="far fa-edit"></i></a></td>
-                    <td>{{ row['address_city'] }}</td>
-                  </tr>
-                {% endfor %}
-                </tbody>
-              </table>
-          </span>
-        {% endif %}
+              <span id="venues-view" style="display: none;">
+                <!-- Table (Venues) -->
+                <p>&nbsp;</p>
+                <table class="table">
+                  <thead>
+                    <tr>
+                        <td class="text-center" colspan="5"><b>VENUES</b></td>
+                    </tr>
+                    <tr>
+                      <th>Name</th>
+                      <th>Edit</th>
+                      <th>City</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for row in venues %}
+                    <tr>
+                      <td><a href="{{ url_for('venue', slug=row['slug']) }}" target="_blank">{{ row['name'] }} <i class="fas fa-external-link-alt"></i></a></td>
+                      <td><a href="{{ url_for('edit', category='venue', slug=row['slug']) }}"><i class="far fa-edit"></i></a></td>
+                      <td>{{ row['address_city'] }}</td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </span>
+            {% endif %}
 
             {% if events %}
-            <span id="events-view">
-              <!-- Table (Events) -->
-              <p>&nbsp;</p>
-              <table class="table">
-                <thead>
-                  <tr>
-                      <td class="text-center" colspan="6"><b>EVENTS</b></td>
-                  </tr>
-                  <tr>
-                    <th>Date</th>
-                    <th>Name</th>
-                    <th>Edit</th>
-                    <th>Tickets sold</th>
-                    <th>New ticket type</th>
-                    <th>New tickets</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {% for row in events %}
-                  <tr>
-                      <td>{{ row['start_date']|date('small') }}</td>
-                      <td><a href="{{ url_for('event', id=row['id']) }}" target="_blank">{{ row['name'] }}</a></td>
-                      <td><a href="{{ url_for('edit', category='event', event_id=row['id']) }}"><i class="far fa-edit"></i></a></td>
-                      <td>{{ row['tickets_sold'] }}</td>
-                      <td><a href="{{ url_for('create', category='ticket_type', event_id=row['id']) }}"><i class="fas fa-ticket-alt"></i></a></td>
-                      <td><a href="{{ url_for('create', category='ticket', event_id=row['id']) }}"><i class="fas fa-plus-square"></i></a></td>
-                  </tr>
-                {% endfor %}
-                </tbody>
-              </table>
-          </span>
-        {% endif %}
+              <span id="events-view">
+                <!-- Table (Events) -->
+                <p>&nbsp;</p>
+                <table class="table">
+                  <thead>
+                    <tr>
+                        <td class="text-center" colspan="6"><b>EVENTS</b></td>
+                    </tr>
+                    <tr>
+                      <th>Date</th>
+                      <th>Name</th>
+                      <th>Edit</th>
+                      <th>Tickets sold</th>
+                      <th>New ticket type</th>
+                      <th>New tickets</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for row in events %}
+                    <tr>
+                        <td>{{ row['start_date']|date('small') }}</td>
+                        <td><a href="{{ url_for('event', event_id=row['id']) }}" target="_blank">{{ row['name'] }} <i class="fas fa-external-link-alt"></i></a></td>
+                        <td><a href="{{ url_for('edit', category='event', event_id=row['id']) }}"><i class="far fa-edit"></i></a></td>
+                        <td>{{ row['tickets_sold'] }}</td>
+                        <td><a href="{{ url_for('create', category='ticket-type', event_id=row['id']) }}"><i class="fas fa-ticket-alt"></i></a></td>
+                        <td><a href="{{ url_for('create', category='tickets', event_id=row['id']) }}"><i class="fas fa-plus-square"></i></a></td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </span>
+            {% else %}
+              <span id="events-view">
+                <p align="center">You have not created any events yet.</p>
+              </span>
+            {% endif %}
 
             {% if ticket_types %}
-            <span id="ticket-types-view" style="display: none;">
-              <!-- Table (Events) -->
-              <p>&nbsp;</p>
-              <table class="table">
-                <thead>
-                  <tr>
-                      <td class="text-center" colspan="7"><b>TICKET TYPES</b></td>
-                  </tr>
-                  <tr>
-                    <th>Date</th>
-                    <th>Event</th>
-                    <th>Name</th>
-                    <th>Edit</th>
-                    <th>Price</th>
-                    <th>Tickets sold</th>
-                    <th>Tickets remaining</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {% for row in ticket_types %}
-                  <tr>
-                      <td>{{ row['event_start_date']|date('small') }}</td>
-                      <td><a href="{{ url_for('event', id=row['event']) }}" target="_blank">{{ row['event_name'] }}</a></td>
-                      <td>{{ row['name'] }}</td>
-                      <td><a href="{{ url_for('edit', category='ticket_type', event_id=row['event'], ticket_type_slug=row['slug']) }}"><i class="far fa-edit"></i></a></td>
-                      <td>£{{ row['price'] }}</td>
-                      <td>{{ row['tickets_sold'] }}</td>
-                      <td>{{ row['tickets_remaining'] }}</td>
-                  </tr>
-                {% endfor %}
-                </tbody>
-              </table>
-          </span>
-        {% endif %}
+              <span id="ticket-types-view" style="display: none;">
+                <!-- Table (Events) -->
+                <p>&nbsp;</p>
+                <table class="table">
+                  <thead>
+                    <tr>
+                        <td class="text-center" colspan="7"><b>TICKET TYPES</b></td>
+                    </tr>
+                    <tr>
+                      <th>Date</th>
+                      <th>Event</th>
+                      <th>Name</th>
+                      <th>Edit</th>
+                      <th>Price</th>
+                      <th>Tickets remaining</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for row in ticket_types %}
+                    <tr>
+                        <td>{{ row['event_start_date']|date('small') }}</td>
+                        <td><a href="{{ url_for('event', event_id=row['event']) }}" target="_blank">{{ row['event_name'] }} <i class="fas fa-external-link-alt"></i></a></td>
+                        <td>{{ row['name'] }}</td>
+                        <td><a href="{{ url_for('edit', category='ticket-type', event_id=row['event'], slug=row['slug']) }}"><i class="far fa-edit"></i></a></td>
+                        <td>£{{ row['price'] }}</td>
+                        <td>{{ row['tickets_remaining'] }}</td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </span>
+            {% else %}
+              <span id="ticket-types-view" style="display: none;">
+                <p align="center">You have not created any ticket types yet.</p>
+              </span>
+            {% endif %}
 
             {% if tickets %}
-            <span id="tickets-view" style="display: none;">
-              <!-- Table (Tickets) -->
-              <p>&nbsp;</p>
-              <table class="table">
-                <thead>
-                  <tr>
-                      <td class="text-center" colspan="6"><b>TICKETS</b></td>
-                  </tr>
-                  <tr>
-                    <th>Date</th>
-                    <th>Code</th>
-                    <th>Owner</th>
-                    <th>Event</th>
-                    <th>Ticket Type</th>
-                    <th>Vote</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {% for row in tickets %}
-                  <tr>
-                      <td>{{ row['created_at'] }}</td>
-                      <td>{{ row['code'] }}</td>
-                      <td>{{ row['owner'] }}</td>
-                      <td><a href="{{ url_for('event', id=row['event_id']) }}" target="_blank">{{ row['event'] }}</a></td>
-                      <td>{{ row['ticket_type'] }}</td>
-                      <td><a href="{{ url_for('artist', slug=row['vote_slug']) }}" target="_blank">{{ row['vote_artist'] }}</a></td>
-                  </tr>
-                {% endfor %}
-                </tbody>
-              </table>
-          </span>
-        {% endif %}
+              <span id="tickets-view" style="display: none;">
+                <!-- Table (Tickets) -->
+                <p>&nbsp;</p>
+                <table class="table">
+                  <thead>
+                    <tr>
+                        <td class="text-center" colspan="7"><b>TICKETS</b></td>
+                    </tr>
+                    <tr>
+                      <th>Date</th>
+                      <th>Time</th>
+                      <th>Code</th>
+                      <th>Owner</th>
+                      <th>Event</th>
+                      <th>Ticket Type</th>
+                      <th>Vote</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for row in tickets %}
+                    <tr>
+                        <td>{{ row['created_date']|date('small') }}</td>
+                        <td>{{ row['created_time'][:5] }}</td>
+                        <td>{{ row['code'] }}</td>
+                        <td>{{ row['owner'] }}</td>
+                        <td><a href="{{ url_for('event', event_id=row['event_id']) }}" target="_blank">{{ row['event'] }} <i class="fas fa-external-link-alt"></i></a></td>
+                        <td>{{ row['ticket_type'] }}</td>
+                        {% if row['vote_artist'] %}
+                          <td><a href="{{ url_for('artist', slug=row['vote_slug']) }}" target="_blank">{{ row['vote_artist'] }} <i class="fas fa-external-link-alt"></i></a></td>
+                        {% else %}
+                          <td>
+                            <div class="dropdown">
+                              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Vote
+                              </button>
+                              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                {% for item in row['lineup'] %}
+                                  <a class="dropdown-item dropdown-vote" data-code="{{ row['code'] }}" data-tally="{{ item['slug'] }}" href="#">{{ item['artist'] }}</a>
+                                {% endfor %}
+                              </div>
+                            </div>
+                          </td>
+                        {% endif %}
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </span>
+            {% else %}
+              <span id="tickets-view" style="display: none;">
+                <p align="center">You have not sold any tickets yet.</p>
+              </span>
+            {% endif %}
+
+            <script type=text/javascript>
+              $(document).ready(function() {
+                $(".dropdown-vote").click(function() {
+                  var code = $(this).data("code");
+                  var tally = $(this).data("tally");
+                    $.getJSON($SCRIPT_ROOT + "/_vote", {
+                      code: code,
+                      tally: tally,
+                    }, function(data) {
+                      if (data.result['vote'] == tally && data.result['owner'] == "{{ account.name }}") {
+                        location.reload();
+                      }
+                    });
+                    return false;
+                });
+              });
+            </script>
 
             <script>
               $(document).ready(function() {

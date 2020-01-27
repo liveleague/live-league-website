@@ -22,10 +22,3 @@ def format_time(value, format):
             return datetime.strptime(
                 value, old_format
             ).strftime(new_format).lstrip("0").replace(" 0", " ")
-
-def format_datetime(value, format):
-    """Format a datetime."""
-    if value is None:
-        return ''
-    else:
-        old_format = '%Y-%m-%dT'

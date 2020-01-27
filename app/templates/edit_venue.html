@@ -51,7 +51,8 @@
                           data-county="{{ venue.address_county }}"
                           data-country="{{ venue.address_country }}"
                           data-google-maps="{{ venue.google_maps }}"
-                          data-image="{{ venue.image }}">
+                          data-image="{{ venue.image }}"
+                          value="{{ venue.slug }}">
                           {{ venue.name }}
                   </option>
                 {% endfor %}
@@ -157,7 +158,7 @@
             <div id="image-div">
               {{ form.image.label(for="ImageInput") }}<br>
               <img src="#" id="profile-picture" class="img-rounded">
-              <p>&nbsp;</p>
+              <p id="image-space">&nbsp;</p>
               {{ form.image(type="file", class="form-control-file", id="ImageInput", placeholder="Upload profile picture") }}
               {% for error in form.image.errors %}
                 <span style="color: white;">[{{ error }}]</span>
@@ -173,7 +174,7 @@
           <script>
             $(document).ready(function() {
               $('option').css('color', 'black');
-              $('#country-code-select').val('GB');
+              $('#country-code-select').val($("#venueSelect option:selected").data("country"));
 
               function changeSelections() {
                 var slug = $("#venueSelect option:selected").data("slug");
@@ -213,6 +214,7 @@
               // Remove image when file is selected
               $('input[type=file]').change(function(e) {
                 $("#profile-picture").attr("src", null);
+                $("#image-space").hide();
               });
 
             });

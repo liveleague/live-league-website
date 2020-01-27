@@ -44,7 +44,7 @@
                           data-id="{{ event.id }}"
                           data-name="{{ event.name }}"
                           data-description="{{ event.description }}"
-                          data-venue="{{ event.venue_slug }}"
+                          data-venue="{{ event.venue }}"
                           data-start-date="{{ event.start_date }}"
                           data-start-time="{{ event.start_time }}"
                           data-end-date="{{ event.end_date }}"
@@ -52,7 +52,8 @@
                           {% for tally in event.lineup %}
                             data-artist-{{ loop.index }}="{{ tally.artist_slug }}"
                           {% endfor %}
-                          data-image="{{ event.image }}">
+                          data-image="{{ event.image }}"
+                          value="{{ event.id }}">
                           {{ event.name }}
                   </option>
                 {% endfor %}
@@ -128,18 +129,19 @@
 
             <p>&nbsp;</p>
 
-            <p>To select multiple artists, hold down:</p>
+            <p>To add or remove artists, hold down:</p>
             <ul>
               <li>'Ctrl' on Windows</li>
               <li>'Command' on Mac</li>
             </ul>
+            <p><b><u>WARNING</u>:</b> Removing artists will permanently delete their votes</p><br>
 
-            <!-- Lineup -->
+            <!-- Line-up -->
             <div class="form-group">
-              <label for="artistSelect">Lineup</label>
-              <select multiple class="form-control child-select" id="artistSelect" size="10">
+              <label for="lineupSelect">Line-up</label>
+              <select multiple class="form-control" id="lineupSelect" name="lineup-select" size="10">
                 {% for artist in artists %}
-                  <option class="artist-option" value="{{ artist.slug }}">{{ artist.name }}</option>
+                  <option class="lineup-option" value="{{ artist.slug }}">{{ artist.name }}</option>
                 {% endfor %}
               </select>
             </div>
@@ -150,7 +152,7 @@
             <div id="image-div">
               {{ form.image.label(for="ImageInput") }}<br>
               <img src="#" id="profile-picture" class="img-rounded">
-              <p>&nbsp;</p>
+              <p id="image-space">&nbsp;</p>
               {{ form.image(type="file", class="form-control-file", id="ImageInput", placeholder="Upload profile picture") }}
               {% for error in form.image.errors %}
                 <span style="color: white;">[{{ error }}]</span>
@@ -196,9 +198,9 @@
                   i++;
                 }
 
-                $(".artist-option").prop("selected", false);
+                $(".lineup-option").prop("selected", false);
 
-                $("#artistSelect > option").each(function() {
+                $("#lineupSelect > option").each(function() {
                   if (artists.includes(this.value)) {
                     $(this).prop("selected", true);
                   }
@@ -227,6 +229,7 @@
               // Remove image when file is selected
               $('input[type=file]').change(function(e) {
                 $("#profile-picture").attr("src", null);
+                $("#image-space").hide();
               });
 
             });

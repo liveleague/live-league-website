@@ -11,7 +11,7 @@
         <span>
           <!-- Main -->
           <h1><b>Ticket</b></h1>
-          <p><h6>Event: </h6><a href="{{ url_for('event', id=ticket.event_id) }}">{{ ticket.event }}</a></p>
+          <p><h6>Event: </h6><a href="{{ url_for('event', event_id=ticket.event_id) }}">{{ ticket.event }}</a></p>
           <p><h6>Start: </h6>{{ ticket.event_start_date|date('full') }} - {{ ticket.event_start_time|time('12') }}</p>
           <p><h6>Code: </h6>{{ ticket.code }}</p>
           <p><h6>Type: </h6>{{ ticket.ticket_type }}</p>

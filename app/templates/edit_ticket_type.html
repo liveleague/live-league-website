@@ -12,7 +12,7 @@
               <nav aria-label="breadcrumb" role="navigation">
                   <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url_for('edit', category='ticket_type') }}">Edit Ticket Type</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('edit', category='ticket-type') }}">Edit Ticket Type</a></li>
                   </ol>
                 </nav>
           </span>
@@ -56,14 +56,15 @@
             <div class="form-group">
               <label for="ticketTypeSelect">Ticket Type *</label>
               <select class="form-control child-select" id="ticketTypeSelect" name="ticket-type-select" required>
-                {% if not ticket_type_slug %}
+                {% if not slug %}
                   <option class="type-option" value="None">Select a ticket type...</option>
                 {% endif %}
                 {% for ticket_type in ticket_types %}
                   <option class="ticket-type-option" value="{{ ticket_type.slug }}"
                     data-name="{{ ticket_type.name }}"
                     data-event="{{ ticket_type.event }}"
-                    data-tickets-remaining="{{ ticket_type.tickets_remaining }}">
+                    data-tickets-remaining="{{ ticket_type.tickets_remaining }}"
+                    value="{{ ticket_type.slug }}">
                     {{ ticket_type.name }} - £{{ ticket_type.price }}
                   </option>
                 {% endfor %}

@@ -27,27 +27,34 @@
               <p>&nbsp;</p>
                 <table class="table">
                   <thead>
-                      <tr>
-                          <td colspan="5"><b>TICKETS</b></td>
-                      </tr>
-                      <tr>
-                          <th>Event</th>
-                          <th>Type</th>
-                          <th>Price</th>
-                          <th>Quantity</th>
-                          <th>Remove from cart</th>
-                      </tr>
+                    <tr>
+                        <td colspan="5"><b>TICKETS</b></td>
+                    </tr>
+                    <tr>
+                        <th>Event</th>
+                        <th>Type</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Remove from cart</th>
+                    </tr>
                   </thead>
                   <tbody>
                   {% for row in cart %}
-                      <tr>
-                        <td>{{ row['event'] }}</td>
-                        <td>{{ row['name'] }}</td>
-                        <td>£{{ row['price'] }}</td>
-                        <td>{{ row['quantity'] }}</td>
-                        <td><a href="#" class="remove-from-cart" data-id="{{ row['slug'] }}"><i class="fas fa-trash-alt"></i></a></td>
-                      </tr>
+                    <tr>
+                      <td>{{ row['event'] }}</td>
+                      <td>{{ row['name'] }}</td>
+                      <td>{{ row['quantity'] }}</td>
+                      <td>£{{ row['price'] }}</td>
+                      <td><a href="#" class="remove-from-cart" data-id="{{ row['slug'] }}"><i class="fas fa-trash-alt"></i></a></td>
+                    </tr>
                   {% endfor %}
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td><b>{{ quantity }}</b></td>
+                      <td><b>£{{ cart_total }}</b></td>
+                      <td></td>
+                    </tr>
                   <script type=text/javascript>
                     $(document).ready(function() {
                       $(function() {

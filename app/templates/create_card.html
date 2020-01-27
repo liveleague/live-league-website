@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Add Card{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <span>
+          <!-- Main -->
+          <h1><b>Add Card</b></h1>
+
+              <!-- Stripe -->
+
+              <form action="#" method="post" id="add-card-form">
+
+                {% if messages %}
+                  {% for message in messages %}
+                    <span style="color: white;">[{{ message }}]</span><br>
+                  {% endfor %}
+                    <p>&nbsp;</p>
+                {% endif %}
+
+                <div class="form-row">
+
+                  <input id="cardholder-name" type="text" placeholder="Cardholder name" class="form-control"><p>&nbsp;</p>
+
+                  <div id="card-element" class="form-control">
+                    <!-- a Stripe Element will be inserted here. -->
+                  </div>
+
+                  <!-- Used to display form errors -->
+                  <div id="card-errors"></div>
+                </div>
+
+                <p>&nbsp;</p>
+
+                <button id="card-button" class="btn btn-default" data-secret="{{ client_secret }}">Submit</button>
+              </form>            
+              
+              <script src="https://js.stripe.com/v3/"></script>
+              <script src="{{ url_for('static', filename='js/stripe.js') }}"></script>
+              <script>
+                var stripe_id = "{{ account.stripe_id }}"
+                var successCardAddUrl = "{{ url_for('create', category='card') }}";
+                var errorCardAddUrl = "{{ url_for('create', category='card') }}";
+              </script>
+
+        </span>
+      </div>
+      <div class="col-sm">
+        <span>
+        </span>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

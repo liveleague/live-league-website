@@ -105,8 +105,8 @@
                 {% endif %}
     
                 <!-- Submit button -->
-                {{ login_form.submit(id="login-submit-btn", type="submit", class="btn btn-primary") }}
-                {{ register_form.submit(id="register-submit-btn", style="display: none;", type="submit", class="btn btn-primary") }}
+                {{ login_form.submit(id="login-submit-btn", type="submit", class="btn btn-default") }}
+                {{ register_form.submit(id="register-submit-btn", style="display: none;", type="submit", class="btn btn-default") }}
               </form>
     
               <p>&nbsp;</p>
@@ -176,7 +176,7 @@
                     <tr>
                       <td></td>
                       <td></td>
-                      <td></td>
+                      <td><b>{{ quantity }}</b></td>
                       <td><b>£{{ cart_total }}</b></td>
                     </tr>
                 </tbody>
@@ -200,38 +200,23 @@
                     </label>
                 </div>
 
-                <div class="form-check form-check-radio disabled">
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2" disabled>
-                        PayPal (coming soon)
-                        <span class="form-check-sign"></span>
-                    </label>
-                </div>
-
-                <div class="form-check form-check-radio disabled">
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="radio" name="exampleRadios1" id="exampleRadios1" value="option1" disabled>
-                        Bitcoin (coming soon)
-                        <span class="form-check-sign"></span>
-                    </label>
-                </div>
-
-                <div class="form-check form-check-radio disabled">
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="radio" name="exampleRadios1" id="exampleRadios1" value="option1" disabled>
-                        Credit
-                        <span class="form-check-sign"></span>
-                    </label>
-                </div>
-
               </p>
 
               <p>&nbsp;</p>
 
+              {% if messages %}
+                {% for message in messages %}
+                  <span style="color: white;">[{{ message }}]</span><br>
+                {% endfor %}
+                <p>&nbsp;</p>
+              {% endif %}
+
               <!-- Stripe -->
 
-              <form action="{{ url_for('charge', intent_id=intent.id) }}" method="post" id="payment-form">
+              <form action="#" method="post" id="payment-form">
                 <div class="form-row">
+                  
+                  <label for="card-element">Card</label>
                   <div id="card-element" class="form-control">
                     <!-- a Stripe Element will be inserted here. -->
                   </div>
@@ -242,13 +227,19 @@
 
                 <p>&nbsp;</p>
 
-                <button class="btn btn-primary" data-secret="{{ intent.client_secret }}">Pay</button>
-              </form>
-
+                <button class="btn btn-default" data-secret="{{ client_secret }}">Pay</button>
+              </form>            
+              
               <script src="https://js.stripe.com/v3/"></script>
               <script src="{{ url_for('static', filename='js/stripe.js') }}"></script>
+              <script>
+                var clientSecret = "{{ client_secret }}";
+                var successRedirectUrl = "{{ url_for('success') }}";
+                var errorRedirectUrl = "{{ url_for('error') }}";
+              </script>
 
             {% endif %}
+
           </span>
         </div>
       </div>

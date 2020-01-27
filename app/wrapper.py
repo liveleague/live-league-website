@@ -1,8 +1,12 @@
 from datetime import date, datetime, timedelta
 from operator import itemgetter
 import requests
+import os
 
-API_URL = 'https://api.liveleague.co.uk/v1/'
+if os.environ.get('FLASK_ENV') == 'development':
+    API_URL = 'http://157.245.44.130:8000/v1'
+else:
+    API_URL = 'https://api.liveleague.co.uk/v1'
 
 def image_to_files(image):
     """Helper function to get 'files' from an image."""
@@ -21,81 +25,82 @@ class Public(object):
         self.yesterday = str(date.today()  - timedelta(days=1))
         self.now = str(datetime.now().time())
 
-    def api_call(self, endpoint, method='GET', json=None, files=None):
+    def api_call(self, endpoint, method='get', json=None, files=None):
         """Makes an API call to the back-end server."""
-        if method == 'GET':
-            r = requests.get(API_URL + endpoint)
-        elif method == 'POST':
-            if files:
-                r = requests.post(API_URL + endpoint, data=json, files=files)
-            else:
-                r = requests.post(API_URL + endpoint, json=json)
+        if files:
+            r = requests.request(
+                method, API_URL + endpoint, data=json, files=files
+            )
+        else:
+            r = requests.request(
+                method, API_URL + endpoint, json=json
+            )
         return {'status': r.status_code, 'json': r.json()}
 
     def user_exists(self, email):
         """Check if an email address belongs to a user."""
         json = {'email': email}
-        exists = self.api_call('/user/exists/', 'POST', json)
+        exists = self.api_call('/user/exists/', 'post', json)
         return exists
 
     def create_user(self, email, password, name):
         """Create a user."""
         json = {'email': email, 'password': password, 'name': name}
-        user = self.api_call('/user/create/', 'POST', json)
+        user = self.api_call('/user/create/', 'post', json)
         return user
 
     def create_temporary_user(self, email):
         """Create a temporary user."""
         json = {'email': email}
-        temporary_user = self.api_call('/user/create/temporary/', 'POST', json)
+        temporary_user = self.api_call('/user/create/temporary/', 'post', json)
         return temporary_user
 
     def create_artist(self, email, password, name, phone=None,
-                      description=None, facebook=None, instagram=None,
-                      soundcloud=None, spotify=None, twitter=None,
-                      website=None, youtube=None, image=None):
+                      address_country=None, description=None, facebook=None,
+                      instagram=None, soundcloud=None, spotify=None,
+                      twitter=None, website=None, youtube=None, image=None):
         """Create an artist."""
         json = {
             'email': email, 'password': password, 'name': name, 'phone': phone,
-            'description': description, 'facebook': facebook,
-            'instagram': instagram, 'soundcloud': soundcloud,
-            'spotify': spotify, 'twitter': twitter, 'website': website,
-            'youtube': youtube
+            'address_country': address_country, 'description': description,
+            'facebook': facebook, 'instagram': instagram,
+            'soundcloud': soundcloud, 'spotify': spotify, 'twitter': twitter,
+            'website': website, 'youtube': youtube
         }
         files = image_to_files(image)
-        artist = self.api_call('/user/create/artist/', 'POST', json, files)
+        artist = self.api_call('/user/create/artist/', 'post', json, files)
         return artist
 
-    def invite_artist(self, email, name, phone=None, description=None,
-                      facebook=None, instagram=None, soundcloud=None,
-                      spotify=None, twitter=None, website=None, youtube=None,
-                      image=None):
+    def invite_artist(self, email, name, phone=None, address_country=None,
+                      description=None, facebook=None, instagram=None,
+                      soundcloud=None, spotify=None, twitter=None,
+                      website=None, youtube=None, image=None):
         """Invite an artist."""
         json = {
             'email': email, 'name': name, 'phone': phone,
-            'description': description, 'facebook': facebook,
-            'instagram': instagram, 'soundcloud': soundcloud,
-            'spotify': spotify, 'twitter': twitter, 'website': website,
-            'youtube': youtube
+            'address_country': address_country, 'description': description,
+            'facebook': facebook, 'instagram': instagram,
+            'soundcloud': soundcloud, 'spotify': spotify, 'twitter': twitter,
+            'website': website, 'youtube': youtube
         }
         files = image_to_files(image)
-        artist = self.api_call('/user/invite/artist/', 'POST', json, files)
+        artist = self.api_call('/user/invite/artist/', 'post', json, files)
         return artist
 
-    def create_promoter(self, email, password, name, phone, description=None,
-                        facebook=None, instagram=None, soundcloud=None,
-                        spotify=None, twitter=None, website=None, youtube=None,
-                        image=None):
+    def create_promoter(self, email, password, name, phone, address_country,
+                        description=None, facebook=None, instagram=None,
+                        soundcloud=None, spotify=None, twitter=None,
+                        website=None, youtube=None, image=None):
         """Create a promoter."""
         json = {
             'email': email, 'password': password, 'name': name, 'phone': phone,
-            'description': description, 'facebook': facebook,
-            'instagram': instagram, 'soundcloud': soundcloud,
-            'spotify': spotify, 'twitter': twitter, 'website': website,
-            'youtube': youtube
+            'address_country': address_country, 'description': description,
+            'facebook': facebook, 'instagram': instagram,
+            'soundcloud': soundcloud, 'spotify': spotify, 'twitter': twitter,
+            'website': website, 'youtube': youtube
         }
         files = image_to_files(image)
-        promoter = self.api_call('/user/create/promoter/', 'POST', json, files)
+        promoter = self.api_call('/user/create/promoter/', 'post', json, files)
         return promoter
 
     def get_prizes(self):
@@ -106,7 +111,7 @@ class Public(object):
     def get_token(self, email, password):
         """Retrieve a token or create one for the first time."""
         json = {'email': email, 'password': password}
-        token = self.api_call('/user/token/', 'POST', json)
+        token = self.api_call('/user/token/', 'post', json)
         return token
 
     def get_artist(self, slug):
@@ -124,9 +129,9 @@ class Public(object):
         venue = self.api_call('/league/venue/' + slug)
         return venue
 
-    def get_event(self, id):
+    def get_event(self, event_id):
         """Retrieve a event."""
-        response = self.api_call('/league/event/' + str(id))
+        response = self.api_call('/league/event/' + str(event_id))
         event = response['json']
         if 'lineup' in event:
             lineup = event['lineup']
@@ -134,7 +139,7 @@ class Public(object):
             for item in lineup:
                 artist = item['artist']
                 artist_slug = item['artist_slug']
-                tally = self.get_tally(id, artist_slug)['json']
+                tally = self.get_tally(event_id, artist_slug)['json']
                 tally['artist_slug'] = artist_slug
                 tallies.append(tally)
             event['lineup'] = tallies
@@ -169,46 +174,31 @@ class Public(object):
 
     def list_events(self, promoter='', venue='', when='all'):
         """List events."""
-        response = self.api_call('/league/list/events/?ordering=start_date' + \
+        if when == 'past':
+            date_filter = 'end_date__lt=' + self.today
+        elif when == 'upcoming':
+            date_filter = 'start_date__gt=' + self.yesterday
+        else:
+            date_filter = ''
+        events = self.api_call(
+            '/league/list/events/?ordering=start_date&' + date_filter + \
             '&promoter=' + promoter + '&venue=' + venue
-        )
-        events = []
-        for event in response['json']:
-            if when == 'past':
-                if event['start_date'] < self.today or \
-                (event['start_date'] == self.today and \
-                event['start_time'] <= self.now):
-                    events.append(event)
-            elif when == 'upcoming':
-                if event['start_date'] > self.today or \
-                (event['start_date'] == self.today and \
-                event['start_time'] >= self.now):
-                    events.append(event)
-            elif when == 'current_and_upcoming':
-                if event['start_date'] > self.today or \
-                (event['start_date'] == self.today and \
-                event['end_time'] >= self.now):
-                    events.append(event)
-            else:
-                events.append(event)
+        )['json']
         return events
 
     def list_tallies(self, slug='', event_id='', when='all'):
         """List tallies (lineup entries) for artists in the league."""
         response = self.api_call(
-            '/league/list/tallies/?ordering=-event__start_date&artist=' + slug + '&event=' + str(event_id)
+            '/league/list/tallies/?ordering=event__start_date&artist=' + \
+            slug + '&event=' + str(event_id)
         )
         tallies = []
         for tally in response['json']:
             if when == 'past':
-                if tally['event_start_date'] < self.today or \
-                (tally['event_start_date'] == self.today and \
-                tally['event_start_time'] <= self.now):
+                if tally['event_end_date'] < self.today:
                     tallies.append(tally)
             elif when == 'upcoming':
-                if tally['event_start_date'] > self.today or \
-                (tally['event_start_date'] == self.today and \
-                tally['event_start_time'] >= self.now):
+                if tally['event_start_date'] > self.yesterday:
                     tallies.append(tally)
             else:
                 tallies.append(tally)
@@ -248,33 +238,24 @@ class Private(object):
         self.yesterday = str(date.today()  - timedelta(days=1))
         self.now = str(datetime.now().time())
 
-    def api_call(self, endpoint, method='GET', json=None, files=None):
+    def api_call(self, endpoint, method='get', json=None, files=None):
         """Makes an API call to the back-end server."""
         headers = {
-            'Content-Type': 'application/json',
             'Authorization': 'Token ' + self.token
         }
-        if method == 'GET':
-            r = requests.get(API_URL + endpoint, headers=headers)
-        elif method == 'POST':
-            if files:
-                r = requests.post(
-                    API_URL + endpoint, headers=headers, data=json, files=files
-                )
-            else:
-                r = requests.post(
-                    API_URL + endpoint, headers=headers, json=json
-                )
-        elif method == 'PATCH':
-            if files:
-                r = requests.patch(
-                    API_URL + endpoint, headers=headers, data=json, files=files
-                )
-            else:
-                r = requests.patch(
-                    API_URL + endpoint, headers=headers, json=json
-                )
-        return {'status': r.status_code, 'json': r.json()}
+        if files:
+            r = requests.request(
+                method, API_URL + endpoint, headers=headers, data=json,
+                files=files
+            )
+        else:
+            r = requests.request(
+                method, API_URL + endpoint, headers=headers, json=json
+            )
+        if method == 'delete':
+            return {'status': r.status_code, 'json': ''}
+        else:
+            return {'status': r.status_code, 'json': r.json()}
 
     def create_venue(self, name, address_line1, address_zip, address_city,
                      address_country, description=None, address_line2=None,
@@ -288,7 +269,7 @@ class Private(object):
             'google_maps': google_maps
         }
         files = image_to_files(image)
-        venue = self.api_call('/league/create/venue/', 'POST', json, files)
+        venue = self.api_call('/league/create/venue/', 'post', json, files)
         return venue
 
     def create_event(self, name, venue, start_date, start_time, end_date,
@@ -300,8 +281,14 @@ class Private(object):
             'end_time': end_time, 'description': description
         }
         files = image_to_files(image)
-        event = self.api_call('/league/create/event', 'POST', json, files)
+        event = self.api_call('/league/create/event/', 'post', json, files)
         return event
+
+    def create_tally(self, artist, event):
+        """Create a tally."""
+        json = {'artist': artist, 'event': event}
+        tally = self.api_call('/league/create/tally/', 'post', json)
+        return tally
 
     def create_ticket_type(self, event, name, price, tickets_remaining=None):
         """Create a ticket type."""
@@ -310,14 +297,14 @@ class Private(object):
             'tickets_remaining': tickets_remaining
         }
         ticket_type = self.api_call(
-            '/league/create/ticket-type/', 'POST', json
+            '/league/create/ticket-type/', 'post', json
         )
         return ticket_type
 
     def create_ticket(self, ticket_type):
         """Create a ticket."""
         json = {'ticket_type': ticket_type}
-        ticket = self.api_call('/league/create/ticket/', 'POST', json)
+        ticket = self.api_call('/league/create/ticket/', 'post', json)
         return ticket
 
     def edit_venue(self, venue, name, address_line1, address_zip, address_city,
@@ -333,7 +320,7 @@ class Private(object):
         }
         files = image_to_files(image)
         venue = self.api_call(
-            '/league/edit/venue' + venue, 'PATCH', json, files
+            '/league/edit/venue/' + venue + '/', 'patch', json, files
         )
         return venue
 
@@ -347,32 +334,59 @@ class Private(object):
         }
         files = image_to_files(image)
         event = self.api_call(
-            '/league/edit/event' + event, 'PATCH', json, files
+            '/league/edit/event/' + event + '/', 'patch', json, files
         )
         return event
-    
-    def edit_ticket_type(self, name, tickets_remaining=None):
+
+    def delete_tally(self, slug):
+        """Create a tally."""
+        json = None
+        tally = self.api_call(
+            '/league/delete/tally/' + slug + '/', 'delete', json
+        )
+        return tally
+
+    def edit_ticket_type(self, slug, name=None, tickets_remaining=None):
         """Edit a ticket type."""
         json = {'name': name, 'tickets_remaining': tickets_remaining}
-        ticket_type = self.api_call('/league/edit/ticket-type/', 'PATCH', json)
+        ticket_type = self.api_call(
+            '/league/edit/ticket-type/' + slug + '/', 'patch', json
+        )
         return ticket_type
+
+    def edit_account(self, email=None, password=None, name=None, phone=None,
+                     stripe_id=None, address_country=None, description=None,
+                     facebook=None, instagram=None, soundcloud=None,
+                     spotify=None, twitter=None, website=None, youtube=None,
+                     image=None):
+        """Edit the user's account."""
+        json = {}
+        for param in ['email', 'password', 'name', 'phone', 'stripe_id',
+                      'address_country', 'description', 'facebook',
+                      'instagram', 'soundcloud', 'spotify', 'twitter',
+                      'website', 'youtube']:
+            if eval(param) is not None:
+                json[param] = eval(param)
+        files = image_to_files(image)
+        account = self.api_call('/user/me/', 'patch', json, files)
+        return account
 
     def get_account(self):
         """Retrieve the user's account."""
-        account = self.api_call('/user/me')
+        account = self.api_call('/user/me/')
         return account
     
     def update_address_zip(self):
         """Update the user's postcode."""
         json = {'address_zip': address_zip}
-        address_zip = self.api_call('/user/me', 'PATCH', json)
+        address_zip = self.api_call('/user/me/', 'patch', json)
         return address_zip
 
     def vote_ticket(self, code, vote):
         """Vote."""
         json = {'vote': vote}
         ticket = self.api_call(
-            '/league/vote/ticket/' + code + '/', 'PATCH', json
+            '/league/vote/ticket/' + code + '/', 'patch', json
         )
         return ticket
 
@@ -381,22 +395,18 @@ class Private(object):
         ticket = self.api_call('/league/ticket/' + code)
         return ticket
 
-    def list_tickets(self, when='all'):
+    def list_tickets(self, when='all', owner=''):
         """List the user's tickets."""
         response = self.api_call(
-            '/league/list/tickets?ordering=-id'
+            '/league/list/tickets?ordering=-id&owner=' + owner
         )
         tickets = []
         for ticket in response['json']:
             if when == 'past':
-                if ticket['event_start_date'] < self.today or \
-                (ticket['event_start_date'] == self.today and \
-                ticket['event_start_time'] <= self.now):
+                if ticket['event_end_date'] < self.today:
                     tickets.append(ticket)
             elif when == 'upcoming':
-                if ticket['event_start_date'] > self.today or \
-                (ticket['event_start_date'] == self.today and \
-                ticket['event_start_time'] >= self.now):
+                if ticket['event_start_date'] > self.yesterday:
                     tickets.append(ticket)
             else:
                 tickets.append(ticket)
@@ -408,14 +418,10 @@ class Private(object):
         ticket_types = []
         for ticket_type in response['json']:
             if when == 'past':
-                if ticket_type['event_start_date'] < self.today or \
-                (ticket_type['event_start_date'] == self.today and \
-                ticket_type['event_start_time'] <= self.now):
+                if ticket_type['event_end_date'] < self.today:
                     ticket_types.append(ticket_type)
             elif when == 'upcoming':
-                if ticket_type['event_start_date'] > self.today or \
-                (ticket_type['event_start_date'] == self.today and \
-                ticket_type['event_start_time'] >= self.now):
+                if ticket_type['event_start_date'] > self.yesterday:
                     ticket_types.append(ticket_type)
             else:
                 ticket_types.append(ticket_type)

@@ -59,38 +59,40 @@
       <!-- Column 2 of 2 -->
       <span>
         <span id="mobile-gap-span"></span>
-        <!-- Table (Upcoming Events) -->
-        <table class="table">
-          <thead>
-              <tr>
-                  <td id="events-header" class="text-center" colspan="6"><b>UPCOMING EVENTS</b></td>
-              </tr>
-              <tr>
-                  <th class="events-image-th"></th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Name</th>
-                  <th>Venue</th>
-                  <th>City</th>
-              </tr>
-          </thead>
-          <tbody id="tbody-upcoming-events">
-          {% for row in upcoming_events %}
-              <tr>
-                  {% if row['image'] %}
-                    <td class="events-image-td"><a href="{{ url_for('event', id=row['id']) }}"><img src="{{ row['image'] }}" class="img-rounded img-thumbnail-small"></a></td>
-                  {% else %}
-                    <td class="events-image-td"></td>
-                  {% endif %}
-                  <td>{{ row['start_date']|date('small') }}</td>
-                  <td>{{ row['start_time'][:-3] }}</td>
-                  <td><a href="{{ url_for('event', id=row['id']) }}">{{ row['name'] }}</a></td>
-                  <td><a href="{{ url_for('venue', slug=row['venue_slug']) }}">{{ row['venue'] }}</a></td>
-                  <td>{{ row['venue_city'] }}</td>
-              </tr>
-          {% endfor %}
-          </tbody>
-        </table>
+        {% if upcoming_events %}
+          <!-- Table (Upcoming Events) -->
+          <table class="table">
+            <thead>
+                <tr>
+                    <td id="events-header" class="text-center" colspan="6"><b>UPCOMING EVENTS</b></td>
+                </tr>
+                <tr>
+                    <th class="events-image-th"></th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Name</th>
+                    <th>Venue</th>
+                    <th>City</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-upcoming-events">
+            {% for row in upcoming_events %}
+                <tr>
+                    {% if row['image'] %}
+                      <td class="events-image-td"><a href="{{ url_for('event', event_id=row['id']) }}"><img src="{{ row['image'] }}" class="img-rounded img-thumbnail-small"></a></td>
+                    {% else %}
+                      <td class="events-image-td"></td>
+                    {% endif %}
+                    <td>{{ row['start_date']|date('small') }}</td>
+                    <td>{{ row['start_time'][:-3] }}</td>
+                    <td><a href="{{ url_for('event', event_id=row['id']) }}">{{ row['name'] }}</a></td>
+                    <td><a href="{{ url_for('venue', slug=row['venue']) }}">{{ row['venue_name'] }}</a></td>
+                    <td>{{ row['venue_city'] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
         <script>
           $(document).ready(function() {
             var isMobile = false; //initiate as false

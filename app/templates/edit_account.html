@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% block title %}Edit Account{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <span>
+          <!-- Main -->
+          <h1><b>Edit Account</b></h1>
+
+          <form action="" method="post" enctype="multipart/form-data" novalidate>
+
+            {% if messages %}
+              {% for message in messages %}
+                <span style="color: white;">[{{ message }}]</span><br>
+              {% endfor %}
+              <p>&nbsp;</p>
+            {% endif %}
+
+            {% if account.is_artist or account.is_promoter %}
+
+              {{ edit_artist_promoter_form.hidden_tag() }}
+
+              <!-- Email (edit-artist-promoter) -->
+              <div id="edit-artist-promoter-email-input" class="form-group">
+                <label>Email</label>
+                {{ edit_artist_promoter_form.email(type="email", class="form-control", placeholder="Enter email", value=account.email, **{'aria-describedby':"emailHelp"}) }}
+                {% for error in edit_artist_promoter_form.email.errors %}
+                  <span id="edit-artist-promoter-email-errors" style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <p>&nbsp;</p>
+
+              <!-- New Password (edit-artist-promoter) -->
+              <div id="edit-artist-promoter-password-input" class="form-group">
+                <label>New password</label>
+                {{ edit_artist_promoter_form.password(type="password", class="form-control", placeholder="Enter password") }}
+                {% for error in edit_artist_promoter_form.password.errors %}
+                  <span id="edit-artist-promoter-password-errors" style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Confirm New Password (edit-artist-promoter) -->
+              <div id="edit-artist-promoter-password-input" class="form-group">
+                <label>Confirm new password</label>
+                {{ edit_artist_promoter_form.confirm_password(type="password", class="form-control", placeholder="Enter password") }}
+                {% for error in edit_artist_promoter_form.confirm_password.errors %}
+                  <span id="edit-artist-promoter-confirm-password-errors" style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <p>&nbsp;</p>
+
+              <!-- Name (edit-artist-promoter only) -->
+              <div id="name-div" class="form-group">
+                <label>Name</label>
+                {{ edit_artist_promoter_form.name(type="text", class="form-control", id="NameInput", placeholder="Enter name", value=account.name) }}
+                {% for error in edit_artist_promoter_form.name.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Country Code & Phone (edit-artist-promoter) -->
+              <div class="form-row">
+                <div id="edit-artist-promoter-country-code" class="form-group col-md-4">
+                  <label>Phone Country</label>
+                  {{ edit_artist_promoter_form.country_code(id="country-code-select", type="text", class="form-control", placeholder="Enter country code", **{'aria-describedby':"CountryCodeHelp"}) }}
+                  {% for error in edit_artist_promoter_form.country_code.errors %}
+                    <span style="color: white;">[{{ error }}]</span>
+                  {% endfor %}
+                </div>
+                <div id="edit-artist-promoter-phone-input" class="form-group col-md-6">
+                  <label>Phone Number</label>
+                  {{ edit_artist_promoter_form.phone(type="text", class="form-control", placeholder="Enter phone", value=account.phone, **{'aria-describedby':"phoneHelp"}) }}
+                  {% for error in edit_artist_promoter_form.phone.errors %}
+                    <span id="edit-artist-promoter-phone-errors" style="color: white;">[{{ error }}]</span>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Description (edit-artist-promoter only) -->
+              <div id="description-div" class="form-group">
+                <p>&nbsp;</p>
+                <label>Description</label>
+                {{ edit_artist_promoter_form.description(type="text", class="form-control", id="DescriptionInput", placeholder="Enter description") }}
+                {% for error in edit_artist_promoter_form.description.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+                <p>&nbsp;</p>
+              </div>
+
+              <!-- Facebook (edit-artist-promoter only) -->
+              <div id="facebook-div" class="form-group">
+                <label>Facebook</label>
+                {{ edit_artist_promoter_form.facebook(type="text", class="form-control", id="FacebookInput", placeholder="Enter facebook link", value=account.facebook) }}
+                {% for error in edit_artist_promoter_form.facebook.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Instagram (edit-artist-promoter only) -->
+              <div id="instagram-div" class="form-group">
+                <label>Instagram</label>
+                {{ edit_artist_promoter_form.instagram(type="text", class="form-control", id="InstagramInput", placeholder="Enter instagram link", value=account.instagram) }}
+                {% for error in edit_artist_promoter_form.instagram.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Soundcloud (edit-artist-promoter only) -->
+              <div id="soundcloud-div" class="form-group">
+                <label>Soundcloud</label>
+                {{ edit_artist_promoter_form.soundcloud(type="text", class="form-control", id="SoundcloudInput", placeholder="Enter soundcloud link", value=account.soundcloud) }}
+                {% for error in edit_artist_promoter_form.soundcloud.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+    
+              <!-- Spotify (edit-artist-promoter only) -->
+              <div id="spotify-div" class="form-group">
+                <label>Spotify</label>
+                {{ edit_artist_promoter_form.spotify(type="text", class="form-control", id="SpotifyInput", placeholder="Enter spotify link", value=account.spotify) }}
+                {% for error in edit_artist_promoter_form.spotify.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+      
+              <!-- Twitter (edit-artist-promoter only) -->
+              <div id="twitter-div" class="form-group">
+                <label>Twitter</label>
+                {{ edit_artist_promoter_form.twitter(type="text", class="form-control", id="TwitterInput", placeholder="Enter twitter link", value=account.twitter) }}
+                {% for error in edit_artist_promoter_form.twitter.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+    
+              <!-- Website (edit-artist-promoter only) -->
+              <div id="website-div" class="form-group">
+                <label>Website</label>
+                {{ edit_artist_promoter_form.website(type="text", class="form-control", id="WebsiteInput", placeholder="Enter website link", value=account.website) }}
+                {% for error in edit_artist_promoter_form.website.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+      
+              <!-- Youtube (edit-artist-promoter only) -->
+              <div id="youtube-div" class="form-group">
+                <label>Youtube</label>
+                {{ edit_artist_promoter_form.youtube(type="text", class="form-control", id="YoutubeInput", placeholder="Enter youtube link", value=account.youtube) }}
+                {% for error in edit_artist_promoter_form.youtube.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <p>&nbsp;</p>
+
+              <!-- Image (edit-artist-promoter only) -->
+              <div id="image-div">
+                <label>Image</label><br>
+                <img src="{{ account.image }}" id="profile-picture" class="img-rounded">
+                <p id="image-space">&nbsp;</p>
+                {{ edit_artist_promoter_form.image(type="file", class="form-control-file", id="ImageInput", placeholder="Upload profile picture") }}
+                {% for error in edit_artist_promoter_form.image.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+                <p>&nbsp;</p>
+              </div>
+
+              <!-- Submit button -->
+              {{ edit_artist_promoter_form.submit(id="edit-artist-promoter-submit-btn", type="submit", class="btn btn-default") }}
+            
+            {% else %}
+
+              {{ edit_user_form.hidden_tag() }}
+
+              <!-- Email (edit-user) -->
+              <div id="edit-user-email-input" class="form-group">
+                <label>Email</label>
+                {{ edit_user_form.email(type="email", class="form-control", placeholder="Enter email", value=account.email, **{'aria-describedby':"emailHelp"}) }}
+                {% for error in edit_user_form.email.errors %}
+                  <span id="edit-user-email-errors" style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <p>&nbsp;</p>
+
+              <!-- New Password (edit-user) -->
+              <div id="edit-user-password-input" class="form-group">
+                <label>New password</label>
+                {{ edit_user_form.password(type="password", class="form-control", placeholder="Enter password") }}
+                {% for error in edit_user_form.password.errors %}
+                  <span id="edit-user-password-errors" style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Confirm New Password (edit-user) -->
+              <div id="edit-user-password-input" class="form-group">
+                <label>Confirm new password</label>
+                {{ edit_user_form.confirm_password(type="password", class="form-control", placeholder="Enter password") }}
+                {% for error in edit_user_form.confirm_password.errors %}
+                  <span id="edit-user-confirm-password-errors" style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <p>&nbsp;</p>
+
+              <!-- First name (edit-user only) -->
+              <div id="first-name-div" class="form-group">
+                <label>First name</label>
+                {{ edit_user_form.first_name(type="text", class="form-control", id="firstNameInput", placeholder="Enter first name", value=first_name) }}
+                {% for error in edit_user_form.first_name.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <!-- Last name (edit-user only) -->
+              <div id="last-name-div" class="form-group">
+                <label>Last name</label>
+                {{ edit_user_form.last_name(type="text", class="form-control", id="lastNameInput", placeholder="Enter last name", value=last_name) }}
+                {% for error in edit_user_form.last_name.errors %}
+                  <span style="color: white;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+
+              <p>&nbsp;</p>
+
+              <!-- Submit button -->
+              {{ edit_user_form.submit(id="edit-user-submit-btn", type="submit", class="btn btn-default") }}
+            
+            {% endif %}
+
+          </form>
+
+          <script>
+            $(document).ready(function() {
+
+              $('option').css('color', 'black');
+              $('#country-code-select').val('{{ account.address_country }}');
+              $('#DescriptionInput').val('{{ account.description }}');
+
+              // Remove image when file is selected
+              $('input[type=file]').change(function(e) {
+                $("#profile-picture").attr("src", null);
+                $("#image-space").hide();
+              });
+
+            });
+          </script>
+
+        </span>
+      </div>
+      <div class="col-sm">
+        <span>
+        </span>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

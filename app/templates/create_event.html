@@ -59,12 +59,15 @@
             <div class="form-group">
               <label for="venueSelect">Venue *</label>
               <select class="form-control" id="venueSelect" name="venue-select" required>
-                <option class="type-option" value="None">Select a venue...</option>
+                <option class="venue-option" value="None">Select a venue...</option>
                 {% for venue in venues %}
                   <option class="venue-option" value="{{ venue.slug }}">{{ venue.name }}</option>
                 {% endfor %}
               </select>
             </div>
+
+            <a href="{{ url_for('create', category='venue') }}" target="_blank"><i class="fas fa-plus-square"></i> New venue</a>
+            <p>&nbsp;</p>
 
             <!-- Start Date -->
             <div id="name-div" class="form-group">
@@ -110,15 +113,18 @@
               <li>'Command' on Mac</li>
             </ul>
 
-            <!-- Lineup -->
+            <!-- Line-up -->
             <div class="form-group">
-              <label for="artistSelect">Lineup</label>
-              <select multiple class="form-control" id="artistSelect" size="10">
+              <label for="lineupSelect">Line-up</label>
+              <select multiple class="form-control" id="lineupSelect" name="lineup-select" size="10">
                 {% for artist in artists %}
-                  <option class="artist-option" value="{{ artist.slug }}">{{ artist.name }}</option>
+                  <option class="lineup-option" value="{{ artist.slug }}">{{ artist.name }}</option>
                 {% endfor %}
               </select>
             </div>
+
+            <a href="{{ url_for('create', category='artist') }}" target="_blank"><i class="fas fa-plus-square"></i> New artist</a>
+            <p>&nbsp;</p>
 
             <p>&nbsp;</p>
 

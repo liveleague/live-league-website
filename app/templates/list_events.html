@@ -12,6 +12,14 @@
           <!-- Main -->
           <h1><b>{{ category.capitalize() }}</b></h1>
 
+          {% if when == 'past' %}
+            <i class="fas fa-filter"></i><a href="{{ url_for('lists', category='events', when='past') }}"> <b>Past</b></a> | <a href="{{ url_for('lists', category='events', when='upcoming') }}"> Upcoming</a> | <a href="{{ url_for('lists', category='events', when='all') }}"> All</a>
+          {% elif when == 'upcoming' %}
+            <i class="fas fa-filter"></i><a href="{{ url_for('lists', category='events', when='past') }}"> Past</a> | <a href="{{ url_for('lists', category='events', when='upcoming') }}"> <b>Upcoming</b></a> | <a href="{{ url_for('lists', category='events', when='all') }}"> All</a>
+          {% else %}
+            <i class="fas fa-filter"></i><a href="{{ url_for('lists', category='events', when='past') }}"> Past</a> | <a href="{{ url_for('lists', category='events', when='upcoming') }}"> Upcoming</a> | <a href="{{ url_for('lists', category='events', when='all') }}"> <b>All</b></a>
+          {% endif %}
+          
           <!-- Table -->
           <table class="table">
             <thead>
@@ -32,7 +40,7 @@
             {% for row in data %}
                 <tr>
                     {% if row['image'] %}
-                      <td><a href="{{ url_for('event', id=row['id']) }}"><img src="{{ row['image'] }}" class="img-rounded img-thumbnail-medium"></a></td>
+                      <td><a href="{{ url_for('event', event_id=row['id']) }}"><img src="{{ row['image'] }}" class="img-rounded img-thumbnail-medium"></a></td>
                     {% else %}
                       <td></td>
                     {% endif %}
@@ -40,8 +48,8 @@
                     <td>{{ row['start_time'][:-3] }}</td>
                     <td>{{ row['end_date']|date('small') }}</td>
                     <td>{{ row['end_time'][:-3] }}</td>
-                    <td><a href="{{ url_for('event', id=row['id']) }}">{{ row['name'] }}</a></td>
-                    <td><a href="{{ url_for('venue', slug=row['venue_slug']) }}">{{ row['venue'] }}</a></td>
+                    <td><a href="{{ url_for('event', event_id=row['id']) }}">{{ row['name'] }}</a></td>
+                    <td><a href="{{ url_for('venue', slug=row['venue']) }}">{{ row['venue_name'] }}</a></td>
                     <td>
                       {% for subrow in row.lineup %}
                         <p><a href="{{ url_for('artist', slug=subrow['artist_slug']) }}">{{ subrow['artist'] }}</a></p>

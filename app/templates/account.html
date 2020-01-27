@@ -21,8 +21,13 @@
             {% endif %}
           {% endif %}
           <p><h6>Credit: </h6>£{{ account.credit }}</p>
+          {% if account.is_promoter and not stripe_account_id %}
+            <p>&nbsp;</p>
+            <p>Your account must be verified before tickets can be issued</p>
+            <a href="{{ oauth }}" type="button" class="btn btn-default">Verify account</a>
+          {% endif %}
           <p>&nbsp;</p>
-            <button type="button" class="btn btn-success btn-sm" disabled>Edit</button>
+          <a href="{{ url_for('edit', category='account') }}"><button type="button" class="btn btn-success btn-sm">Edit</button></a>
           <a href="{{ url_for('sign_out') }}" type="button" class="btn btn-warning btn-sm">Sign Out</a>
           <p>&nbsp;</p>
           {% if account.facebook %}
@@ -70,14 +75,24 @@
             {{ account.address_zip }}
           {% endif %}
           </p>
+
           <p>&nbsp;</p>
+
+          {% if express and account.is_verified %}
+            <a href="{{ express }}" type="button" class="btn btn-default" target="_blank">Payment methods <i class="fas fa-external-link-alt"></i></a>
+          {% elif express and not account.is_verified %}
+            <a href="{{ express }}" type="button" class="btn btn-default" target="_blank">Complete verification <i class="fas fa-external-link-alt"></i></a>
+          {% endif %}
+
+          <p>&nbsp;</p>
+          
           {% if upcoming_tickets %}
             <!-- Table (Upcoming Tickets) -->
             <p>&nbsp;</p>
               <table class="table">
                 <thead>
                     <tr>
-                        <td colspan="3"><b>UPCOMING TICKETS</b></td>
+                        <td colspan="5" class="text-center"><b>UPCOMING TICKETS</b></td>
                     </tr>
                     <tr>
                         <th>Code</th>
@@ -92,7 +107,7 @@
                     <tr>
                         <td><a class="ticket-code" href="{{ url_for('ticket', code=row['code']) }}">{{ row['code'] }}</td>
                         <td>{{ row['event_start_date']|date('small') }}</td>
-                        <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
+                        <td><a href="{{ url_for('event', event_id=row['event_id']) }}">{{ row['event'] }}</a></td>
                         <td>{{ row['ticket_type'] }}</td>
                         {% if row['vote_artist'] %}
                           <td><a href="{{ url_for('artist', slug=row['vote_slug']) }}">{{ row['vote_artist'] }}</a></td>
@@ -121,15 +136,15 @@
               $(".dropdown-vote").click(function() {
                 var code = $(this).data("code");
                 var tally = $(this).data("tally");
-                  $.getJSON($SCRIPT_ROOT + "/_vote", {
-                    code: code,
-                    tally: tally,
-                  }, function(data) {
-                    if (data.result['vote'] == tally && data.result['owner'] == "{{ account.name }}") {
-                      location.reload();
-                    }
-                  });
-                  return false;
+                $.getJSON($SCRIPT_ROOT + "/_vote", {
+                  code: code,
+                  tally: tally,
+                }, function(data) {
+                  if (data.result['vote'] == tally && data.result['owner'] == "{{ account.name }}") {
+                    location.reload();
+                  }
+                });
+                return false;
               });
             });
           </script>
@@ -140,7 +155,7 @@
             <table class="table">
               <thead>
                   <tr>
-                      <td colspan="3"><b>PAST TICKETS</b></td>
+                      <td colspan="3" class="text-center"><b>PAST TICKETS</b></td>
                   </tr>
                   <tr>
                       <th>Code</th>
@@ -155,7 +170,7 @@
                   <tr>
                       <td><a href="{{ url_for('ticket', code=row['code']) }}">{{ row['code'] }}</td>
                       <td>{{ row['event_start_date']|date('small') }}</td>
-                      <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
+                      <td><a href="{{ url_for('event', event_id=row['event_id']) }}">{{ row['event'] }}</a></td>
                       <td>{{ row['ticket_type'] }}</td>
                       {% if row['vote_artist'] %}
                         <td><a href="{{ url_for('artist', slug=row['vote_slug']) }}">{{ row['vote_artist'] }}</a></td>
@@ -184,7 +199,7 @@
             <table class="table">
               <thead>
                   <tr>
-                      <td colspan="3"><b>UPCOMING EVENTS</b></td>
+                      <td colspan="3" class="text-center"><b>UPCOMING EVENTS</b></td>
                   </tr>
                   <tr>
                       <th>Date</th>
@@ -196,7 +211,7 @@
               {% for row in upcoming_events %}
                   <tr>
                       <td>{{ row['event_start_date']|date('small') }}</td>
-                      <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
+                      <td><a href="{{ url_for('event', event_id=row['event_id']) }}">{{ row['event'] }}</a></td>
                       {% if row['points'] %}
                         <td>{{ row['points'] }}</td>
                       {% else %}
@@ -213,7 +228,7 @@
             <table class="table">
               <thead>
                   <tr>
-                      <td colspan="3"><b>PAST EVENTS</b></td>
+                      <td colspan="3" class="text-center"><b>PAST EVENTS</b></td>
                   </tr>
                   <tr>
                       <th>Date</th>
@@ -225,7 +240,7 @@
               {% for row in past_events %}
                   <tr>
                       <td>{{ row['event_start_date']|date('small') }}</td>
-                      <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
+                      <td><a href="{{ url_for('event', event_id=row['event_id']) }}">{{ row['event'] }}</a></td>
                       {% if row['points'] %}
                         <td>{{ row['points'] }}</td>
                       {% else %}

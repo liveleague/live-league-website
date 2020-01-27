@@ -69,10 +69,13 @@
               <a class="nav-link active" href="{{ url_for('about') }}">About</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="{{ url_for('lists', category='events') }}">Events</a>
+              <a class="nav-link active" href="{{ url_for('lists', category='events', when='upcoming') }}">Events</a>
             </li>
             <li class="nav-item">
               <a class="nav-link active" href="{{ url_for('contact') }}">Contact</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="http://api.liveleague.co.uk/docs" target="_blank">Developers</a>
             </li>
             {% if is_promoter %}
               <li class="nav-item">
@@ -95,12 +98,8 @@
             </li>
 
             <li class="nav-item">
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link active" href="https://www.facebook.com/livemusicleague" target="_blank"><i class="fab fa-facebook"></i></a>
-                <a class="nav-link active" href="https://www.instagram.com/livemusicleague" target="_blank"><i class="fab fa-instagram"></i></a>
-                <a class="nav-link active" href="https://www.twitter.com/livemusicleague" target="_blank"><i class="fab fa-twitter"></i></i></a>
+              <a class="nav-link active" href="https://github.com/liveleague" target="_blank"><i class="fab fa-github"></i></a>
+              <a class="nav-link active" href="https://instagram.com/livemusicleague" target="_blank"><i class="fab fa-instagram"></i></a>
             </li>
 
           </ul>

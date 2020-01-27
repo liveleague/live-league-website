@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Checkout{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <!-- Grid B -->
+  <div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <span>
+          <h1><b>Checkout</b></h1>
+            <p>Your payment was successful :)</p><br>
+            <p>Please wait while we load your tickets...</p><br>
+            <h4>DON'T FORGET TO VOTE!</h4>
+        </span>
+
+        <script>
+          $(document).ready(function() {
+            setTimeout(function() {
+              location.href = "{{ url_for('account') }}";
+            }, 5000);
+          });
+        </script>
+
+      </div>
+    </div>
+  </div>
+{% endblock %}

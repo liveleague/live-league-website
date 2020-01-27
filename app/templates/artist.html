@@ -67,7 +67,7 @@
               {% for row in upcoming_events %}
                   <tr>
                       <td>{{ row['event_start_date']|date('small') }}</td>
-                      <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
+                      <td><a href="{{ url_for('event', event_id=row['event_id']) }}">{{ row['event'] }}</a></td>
                       {% if row['points'] %}
                         <td>{{ row['points'] }}</td>
                       {% else %}
@@ -96,7 +96,7 @@
               {% for row in past_events %}
                   <tr>
                       <td>{{ row['event_start_date']|date('small') }}</td>
-                      <td><a href="{{ url_for('event', id=row['event_id']) }}">{{ row['event'] }}</a></td>
+                      <td><a href="{{ url_for('event', event_id=row['event_id']) }}">{{ row['event'] }}</a></td>
                       {% if row['points'] %}
                         <td>{{ row['points'] }}</td>
                       {% else %}

@@ -1,7 +1,11 @@
 $(document).ready(function() {
 
-  // Create a Stripe client.
-  var stripe = Stripe('pk_live_MHlS4I7NN4fGQKiR3JUfSMnZ');
+    // Create a Stripe client.
+    if (location.protocol === 'https:') {
+      var stripe = Stripe('pk_live_MHlS4I7NN4fGQKiR3JUfSMnZ');
+    } else {
+      var stripe = Stripe('pk_test_4QJqyITTSyRkqahvU1EQ3idM');
+    }
 
   // Create an instance of Elements.
   var elements = stripe.elements();
@@ -40,22 +44,48 @@ $(document).ready(function() {
     }
   });
 
-  // Handle form submission.
+  // Payment - Handle form submission.
   var form = document.getElementById('payment-form');
-  form.addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    stripe.createToken(card).then(function(result) {
-      if (result.error) {
-        // Inform the user if there was an error.
-        var errorElement = document.getElementById('card-errors');
-        errorElement.textContent = result.error.message;
-      } else {
-        // Send the token to your server.
-        stripeTokenHandler(result.token);
-      }
+  if (form != null) {
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+      stripe.confirmCardPayment(clientSecret, {payment_method: {card: card}}).then(
+          function(result) {
+            if (result.paymentIntent.status === 'succeeded') {
+              $.getJSON($SCRIPT_ROOT + '/_clear_cart', {}, function(data) {
+                location.href = successRedirectUrl;
+              });
+            } else {
+              location.href = errorRedirectUrl;
+            }
+          }
+      )
     });
-  });
+  } else {
+    // Add card - Handle form submission.
+    var form = document.getElementById('add-card-form');
+    form.addEventListener("submit", function(event) {
+      var cardholderName = document.getElementById('cardholder-name');
+      var cardButton = document.getElementById('card-button');
+      var clientSecret = cardButton.dataset.secret;
+      event.preventDefault();
+      stripe.confirmCardSetup(
+        clientSecret,
+        {
+          payment_method: {
+            card: card,
+            billing_details: {name: cardholderName.value}
+          }
+        }
+      ).then(function(result) {
+        if (result.error) {
+          location.href = errorCardAddUrl + '/' + 'error';
+        } else {
+          location.href = successCardAddUrl + '/' + result.setupIntent.payment_method;
+        }
+      });
+    });
+  }
 
   // Submit the form with the token ID.
   function stripeTokenHandler(token) {

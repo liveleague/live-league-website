@@ -17,7 +17,7 @@
         {% endif %}
         <p><h6>Start: </h6>{{ event.start_date|date('full') }} - {{ event.start_time|time('12') }}</p>
         <p><h6>End: </h6>{{ event.end_date|date('full') }} - {{ event.end_time|time('12') }}</p>
-        <p><h6>Venue: </h6><a href="{{ url_for('venue', slug=event['venue_slug']) }}">{{ event.venue }}</a></p>
+        <p><h6>Venue: </h6><a href="{{ url_for('venue', slug=event['venue']) }}">{{ event.venue_name }}</a></p>
         <p><h6>Promoter: </h6><a href="{{ url_for('promoter', slug=event['promoter_slug']) }}">{{ event.promoter }}</a></p>
         <p>&nbsp;</p>
         {% if event.lineup %}
@@ -47,7 +47,7 @@
               </tbody>
             </table>
           {% endif %}
-          {% if not past and tickets%}
+          {% if not past and tickets %}
             <!-- Table (Buy tickets) -->
             <p>&nbsp;</p>
               <table class="table">

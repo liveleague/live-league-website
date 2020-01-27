@@ -20,6 +20,7 @@ class LoginForm(FlaskForm):
 class RegisterUserForm(FlaskForm):
     email = StringField('Email *', validators=[DataRequired(), Email()])
     password = PasswordField('Password *', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm password')
     first_name = StringField('First Name *', validators=[DataRequired()])
     last_name = StringField('Last Name *', validators=[DataRequired()])
     submit = SubmitField()
@@ -35,6 +36,7 @@ class RegisterArtistPromoterForm(FlaskForm):
     )
     email = StringField('Email *', validators=[DataRequired(), Email()])
     password = PasswordField('Password *', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm password')
     name = StringField('Name *', validators=[DataRequired()])
     country_code = SelectField('Phone Country *', choices=COUNTRY_CODES)
     phone = StringField('Phone Number *', validators=[DataRequired()])
@@ -50,13 +52,6 @@ class RegisterArtistPromoterForm(FlaskForm):
     website = URLField('Website', validators=[url(), Optional()])
     youtube = URLField('Youtube', validators=[url(), Optional()])
     image = FileField('Profile Picture')
-
-
-class AddressForm(FlaskForm):
-    address_line1 = StringField('Address Line 1', validators=[DataRequired()])
-    address_line2 = StringField('Address Line 2')
-    address_zip = StringField('Postcode', validators=[DataRequired()])
-    submit = SubmitField()
 
 
 class EmailForm(FlaskForm):
