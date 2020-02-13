@@ -20,7 +20,7 @@
               <p><h6>Verified: </h6><i class="fas fa-times-circle"></i></p>
             {% endif %}
           {% endif %}
-          <p><h6>Credit: </h6>£{{ account.credit }}</p>
+          <!-- <p><h6>Credit: </h6>£{{ account.credit }}</p> -->
           {% if account.is_promoter and not stripe_account_id %}
             <p>&nbsp;</p>
             <p>Your account must be verified before tickets can be issued</p>

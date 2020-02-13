@@ -1,5 +1,5 @@
 import os
 
 class Config(object):
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'm3p%x1134_j7zyjlf#9#c7fgb4jnt1)b2=)05!h*4+eh06wdw6'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'i#2yjd!7wbu000jsx-(2%$qvxkgbwa9g-woygexfady!vrxs&i'
     UPLOAD_FOLDER = '/home/jack/img'

@@ -180,6 +180,8 @@ class Public(object):
             date_filter = 'start_date__gt=' + self.yesterday
         else:
             date_filter = ''
+        url = '/league/list/events/?ordering=start_date&' + date_filter + \
+              '&promoter=' + promoter + '&venue=' + venue
         events = self.api_call(
             '/league/list/events/?ordering=start_date&' + date_filter + \
             '&promoter=' + promoter + '&venue=' + venue

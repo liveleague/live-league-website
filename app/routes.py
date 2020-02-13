@@ -680,7 +680,7 @@ def create(category, event_id=None, card_id=None):
                                     }
                                 )
                                 amount += (
-                                    change * Decimal(item['price']) * 100
+                                    change * Decimal(item['price']) * 15
                                 )
                                 new_ticket_type = Private(
                                     session['token']

@@ -133,3 +133,6 @@ app.sock
 
 # Keys
 app/keys.py
+
+# Config
+config.py
