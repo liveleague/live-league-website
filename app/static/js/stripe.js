@@ -2,9 +2,9 @@ $(document).ready(function() {
 
     // Create a Stripe client.
     if (location.protocol === 'https:') {
-      var stripe = Stripe('pk_live_MHlS4I7NN4fGQKiR3JUfSMnZ');
+      var stripe = Stripe('pk_live_tcra2fBJdWZ8ts1DQbPce8tg00iJcJdJvN');
     } else {
-      var stripe = Stripe('pk_test_4QJqyITTSyRkqahvU1EQ3idM');
+      var stripe = Stripe('pk_test_LS3dng1l7KUzSanWy7ZN48lr00nNfRDjAH');
     }
 
   // Create an instance of Elements.
